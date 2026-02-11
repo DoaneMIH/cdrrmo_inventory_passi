@@ -72,10 +72,13 @@ $expiring_result = $conn->query($expiring_sql);
     </script> -->
 </head>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'header_sidebar.php'; ?>
     
+    <div class="main-content">
     <div class="container">
+        <div class="page-header">
         <h1>Dashboard</h1>
+        </div>
         
         <div class="stats-grid">
             <?php 
@@ -164,6 +167,7 @@ $expiring_result = $conn->query($expiring_sql);
             </div>
         </div>
     </div>
+</div>
 
     <script>
 

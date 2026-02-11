@@ -60,8 +60,8 @@ $categories = $conn->query($cat_sql);
     </script> -->
 </head>
 <body>
-    <?php include 'header.php'; ?>
-    
+    <?php include 'header_sidebar.php'; ?>
+    <div class="main-content">
     <div class="container">
         <div class="page-header">
             <h1>Inventory Management</h1>
@@ -147,6 +147,7 @@ $categories = $conn->query($cat_sql);
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 
     <script>

@@ -1,9 +1,6 @@
 -- ============================================================================
 -- CDRRMO INVENTORY MANAGEMENT SYSTEM - COMPLETE DATABASE SCHEMA
 -- ============================================================================
--- This script creates all necessary tables for the inventory system
--- Run this script in phpMyAdmin or MySQL command line
--- ============================================================================
 
 -- Create database
 CREATE DATABASE IF NOT EXISTS cdrrmo_inventory CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

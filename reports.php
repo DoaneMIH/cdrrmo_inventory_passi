@@ -78,9 +78,10 @@ $categories = $conn->query($categories_sql);
 </head>
 <body>
     <div class="no-print">
-        <?php include 'header.php'; ?>
+        <?php include 'header_sidebar.php'; ?>
     </div>
     
+    <div class="main-content">
     <div class="container">
         <div class="page-header no-print">
             <h1>Inventory Reports</h1>
@@ -193,6 +194,7 @@ $categories = $conn->query($categories_sql);
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script>

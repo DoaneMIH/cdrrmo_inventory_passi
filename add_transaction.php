@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'audit_helper.php';  // ADD AUDIT LOGGING
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
@@ -41,20 +42,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception('Error recording transaction');
         }
         
+        // Capture the transaction ID
+        $trans_id = $conn->insert_id;
+        
+        // Get old item data before update (for audit log)
+        $old_item_data = get_item_data($conn, $item_id);
+        
         // Update inventory
         if ($transaction_type == 'received') {
             $update_sql = "UPDATE inventory_items SET 
                           items_received = items_received + $quantity,
-                          items_on_hand = items_on_hand + $quantity
+                          items_on_hand = items_on_hand + $quantity,
+                          updated_by = {$_SESSION['user_id']}
                           WHERE id = $item_id";
         } else if ($transaction_type == 'distributed') {
             $update_sql = "UPDATE inventory_items SET 
                           items_distributed = items_distributed + $quantity,
-                          items_on_hand = items_on_hand - $quantity
+                          items_on_hand = items_on_hand - $quantity,
+                          updated_by = {$_SESSION['user_id']}
                           WHERE id = $item_id";
         } else { // adjustment
             $update_sql = "UPDATE inventory_items SET 
-                          items_on_hand = items_on_hand + $quantity
+                          items_on_hand = items_on_hand + $quantity,
+                          updated_by = {$_SESSION['user_id']}
                           WHERE id = $item_id";
         }
         
@@ -63,6 +73,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         $conn->commit();
+        
+        // LOG TRANSACTION CREATION
+        log_transaction_create($conn, $_SESSION['user_id'], $trans_id, [
+            'item_id' => $item_id,
+            'transaction_type' => $transaction_type,
+            'quantity' => $quantity,
+            'transaction_date' => $transaction_date,
+            'notes' => $notes,
+            'created_by' => $_SESSION['user_id']
+        ]);
+        
+        // LOG INVENTORY ITEM UPDATE
+        $new_item_data = get_item_data($conn, $item_id);
+        log_item_update($conn, $_SESSION['user_id'], $item_id, $old_item_data, $new_item_data);
+        
         $message = 'Transaction recorded successfully!';
         
         // Refresh item data
@@ -84,8 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'header_sidebar.php'; ?>
     
+    <div class="main-content">
     <div class="container">
         <div class="page-header">
             <h1>Add Transaction</h1>
@@ -141,6 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </form>
         </div>
+    </div>
     </div>
 </body>
 </html>

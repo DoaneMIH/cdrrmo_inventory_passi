@@ -55,10 +55,12 @@ $result = $conn->query($sql);
     </script> -->
 </head>
 <body>
-    <?php include 'header.php'; ?>
-    
+    <?php include 'header_sidebar.php'; ?>
+    <div class="main-content">
     <div class="container">
+        <div class="page-header">
         <h1>Transaction History</h1>
+        </div>
         
         <!-- Filters -->
         <div class="filter-section">
@@ -130,6 +132,7 @@ $result = $conn->query($sql);
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 
     <script>
