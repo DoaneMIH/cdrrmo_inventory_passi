@@ -283,10 +283,9 @@ INSERT INTO categories (category_name, category_code, description, icon, color, 
 
 -- Insert default storage locations
 INSERT INTO storage_locations (location_name, location_code, description) VALUES
-('Main Storage', 'MAIN-01', 'Main storage warehouse'),
-('Cold Storage', 'COLD-01', 'Temperature-controlled storage for food and medical supplies'),
-('Office Storage', 'OFF-01', 'Office supplies storage room'),
-('Equipment Bay', 'EQUIP-01', 'Storage for rescue equipment');
+('Office Storage', 'OFFICE', 'CDRRMO Office storage'),
+('Gabaldon Storage', 'GABALDON', 'Gabaldon storage facility'),
+('Office Storage', 'CITYHALL', 'City Hall storage area');
 
 -- Insert default admin user (username: admin, password: admin123)
 INSERT INTO users (username, password, full_name, email, role, is_active, created_by) VALUES
@@ -316,54 +315,54 @@ INSERT INTO system_settings (setting_key, setting_value, setting_type, descripti
 
 -- OFFICE SUPPLIES
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, storage_location_id, created_by) VALUES
-('OFF-001', 1, 'Book paper 70 GSM 8.5 inch x 13 inch, sub', 'reams', 50, 30, 20, 10, 3, 1),
-('OFF-002', 1, 'Book paper 70 GSM A4 8.3 inches x 11.7 inch sub 20', 'reams', 50, 30, 20, 10, 3, 1),
-('OFF-003', 1, 'Book paper 70 GSM A4 8.5 inches x 11 inch sub 20', 'reams', 45, 30, 15, 10, 3, 1),
-('OFF-004', 1, 'Printer Ink Bottle Refill 003 "Black" 65ml', 'bottles', 15, 15, 0, 5, 3, 1),
-('OFF-005', 1, 'Printer Ink Bottle Refill 003 "Cyan" 65ml', 'bottles', 6, 6, 0, 5, 3, 1),
-('OFF-006', 1, 'Printer Ink Bottle Refill 003 "Yellow" 65ml', 'bottles', 6, 6, 0, 5, 3, 1),
-('OFF-007', 1, 'Printer Ink Bottle Refill T664 "Black" 70ml', 'bottles', 5, 5, 0, 5, 3, 1),
-('OFF-008', 1, 'Printer Ink Bottle Refill T664 "Cyan" 70ml', 'bottles', 3, 3, 0, 5, 3, 1),
-('OFF-009', 1, 'Printer Ink Bottle Refill T664 "Yellow" 70ml', 'bottles', 3, 3, 0, 5, 3, 1);
+('OFF-001', 1, 'Book paper 70 GSM 8.5 inch x 13 inch, sub', 'reams', 50, 30, 20, 10, 1, 1),
+('OFF-002', 1, 'Book paper 70 GSM A4 8.3 inches x 11.7 inch sub 20', 'reams', 50, 30, 20, 10, 1, 1),
+('OFF-003', 1, 'Book paper 70 GSM A4 8.5 inches x 11 inch sub 20', 'reams', 45, 30, 15, 10, 1, 1),
+('OFF-004', 1, 'Printer Ink Bottle Refill 003 "Black" 65ml', 'bottles', 15, 15, 0, 5, 1, 1),
+('OFF-005', 1, 'Printer Ink Bottle Refill 003 "Cyan" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
+('OFF-006', 1, 'Printer Ink Bottle Refill 003 "Yellow" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
+('OFF-007', 1, 'Printer Ink Bottle Refill T664 "Black" 70ml', 'bottles', 5, 5, 0, 5, 1, 1),
+('OFF-008', 1, 'Printer Ink Bottle Refill T664 "Cyan" 70ml', 'bottles', 3, 3, 0, 5, 1, 1),
+('OFF-009', 1, 'Printer Ink Bottle Refill T664 "Yellow" 70ml', 'bottles', 3, 3, 0, 5, 1, 1);
 
 -- MEDICAL SUPPLIES
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, storage_location_id, created_by) VALUES
-('MED-001', 2, 'Arm Sling (Large)', 'pcs', 20, 15, 5, 10, 2, 1),
-('MED-002', 2, 'Arm Sling (Small)', 'pcs', 20, 15, 5, 10, 2, 1),
-('MED-003', 2, 'Blood Glucose Tester Strips', 'pcs', 2, 2, 0, 5, 2, 1),
-('MED-004', 2, 'Extra Large Garbage Bag', 'pack', 10, 3, 7, 5, 2, 1),
-('MED-005', 2, '70% Alcohol', 'bottles', 25, 15, 10, 15, 2, 1),
-('MED-006', 2, 'Non-Rebreather Mask (Adult)', 'pcs', 100, 75, 25, 20, 2, 1),
-('MED-007', 2, 'Nasal Cannula (Adult)', 'pcs', 100, 75, 25, 20, 2, 1),
-('MED-008', 2, 'Surgical Gloves (Medium)', 'boxes', 50, 30, 20, 15, 2, 1),
-('MED-009', 2, 'Face Mask (3-ply)', 'boxes', 100, 60, 40, 25, 2, 1),
-('MED-010', 2, 'Bandage Roll 2 inches', 'rolls', 80, 50, 30, 20, 2, 1);
+('MED-001', 2, 'Arm Sling (Large)', 'pcs', 20, 15, 5, 10, 1, 1),
+('MED-002', 2, 'Arm Sling (Small)', 'pcs', 20, 15, 5, 10, 1, 1),
+('MED-003', 2, 'Blood Glucose Tester Strips', 'pcs', 2, 2, 0, 5, 1, 1),
+('MED-004', 2, 'Extra Large Garbage Bag', 'pack', 10, 3, 7, 5, 1, 1),
+('MED-005', 2, '70% Alcohol', 'bottles', 25, 15, 10, 15, 1, 1),
+('MED-006', 2, 'Non-Rebreather Mask (Adult)', 'pcs', 100, 75, 25, 20, 1, 1),
+('MED-007', 2, 'Nasal Cannula (Adult)', 'pcs', 100, 75, 25, 20, 1, 1),
+('MED-008', 2, 'Surgical Gloves (Medium)', 'boxes', 50, 30, 20, 15, 1, 1),
+('MED-009', 2, 'Face Mask (3-ply)', 'boxes', 100, 60, 40, 25, 1, 1),
+('MED-010', 2, 'Bandage Roll 2 inches', 'rolls', 80, 50, 30, 20, 1, 1);
 
 -- SRR EQUIPMENT
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, storage_location_id, created_by) VALUES
-('SRR-001', 3, 'Rechargeable outdoor LED flood light', 'pcs', 13, 1, 12, 5, 4, 1),
-('SRR-002', 3, 'Collapsible telescope floodlight tripod', 'pcs', 4, 0, 4, 2, 4, 1),
-('SRR-003', 3, 'Industrial waterproof rechargeable emergency flashlight', 'pcs', 10, 3, 7, 5, 4, 1),
-('SRR-004', 3, 'Rechargeable searchlight', 'pcs', 14, 1, 13, 5, 4, 1),
-('SRR-005', 3, 'Storage box 155L storage capacity', 'pcs', 2, 0, 2, 1, 4, 1),
-('SRR-006', 3, 'Folding Table 6ft. Stands 74cm high', 'pcs', 2, 0, 2, 1, 4, 1),
-('SRR-007', 3, 'Folding table 4ft. Stands 74cm high', 'pcs', 2, 1, 1, 1, 4, 1),
-('SRR-008', 3, 'Emergency Rescue Kit', 'sets', 5, 2, 3, 2, 4, 1),
-('SRR-009', 3, 'Life Jacket (Adult)', 'pcs', 20, 5, 15, 10, 4, 1),
-('SRR-010', 3, 'Fire Extinguisher 5kg', 'pcs', 10, 3, 7, 5, 4, 1);
+('SRR-001', 3, 'Rechargeable outdoor LED flood light', 'pcs', 13, 1, 12, 5, 1, 1),
+('SRR-002', 3, 'Collapsible telescope floodlight tripod', 'pcs', 4, 0, 4, 2, 1, 1),
+('SRR-003', 3, 'Industrial waterproof rechargeable emergency flashlight', 'pcs', 10, 3, 7, 5, 1, 1),
+('SRR-004', 3, 'Rechargeable searchlight', 'pcs', 14, 1, 13, 5, 1, 1),
+('SRR-005', 3, 'Storage box 155L storage capacity', 'pcs', 2, 0, 2, 1, 1, 1),
+('SRR-006', 3, 'Folding Table 6ft. Stands 74cm high', 'pcs', 2, 0, 2, 1, 1, 1),
+('SRR-007', 3, 'Folding table 4ft. Stands 74cm high', 'pcs', 2, 1, 1, 1, 1, 1),
+('SRR-008', 3, 'Emergency Rescue Kit', 'sets', 5, 2, 3, 2, 1, 1),
+('SRR-009', 3, 'Life Jacket (Adult)', 'pcs', 20, 5, 15, 10, 1, 1),
+('SRR-010', 3, 'Fire Extinguisher 5kg', 'pcs', 10, 3, 7, 5, 1, 1);
 
 -- FOOD SUPPLIES
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, expiration_date, storage_location_id, created_by) VALUES
-('FOOD-001', 4, 'Bearbrand 33g', 'boxes', 39, 12, 27, 20, NULL, 2, 1),
-('FOOD-002', 4, 'HOMI BEEF', 'boxes', 30, 23, 7, 15, '2026-03-01', 2, 1),
-('FOOD-003', 4, 'HOMI CHICKEN', 'boxes', 5, 5, 0, 10, NULL, 2, 1),
-('FOOD-004', 4, 'LUCKY ME BEEF', 'boxes', 5, 4, 1, 10, NULL, 2, 1),
-('FOOD-005', 4, 'Nescafe 3n1 Original', 'boxes', 6, 1, 5, 5, NULL, 2, 1),
-('FOOD-006', 4, 'Nescafe 3n1 Creamy White', 'boxes', 3, 2, 1, 5, NULL, 2, 1),
-('FOOD-007', 4, 'Nescafe 3n1 Creamy Latte', 'boxes', 6, 2, 4, 5, NULL, 2, 1),
-('FOOD-008', 4, 'Canned Sardines 155g', 'boxes', 50, 25, 25, 20, '2026-06-30', 2, 1),
-('FOOD-009', 4, 'Rice (25kg sack)', 'sacks', 20, 10, 10, 8, NULL, 2, 1),
-('FOOD-010', 4, 'Bottled Water 500ml (24 bottles/case)', 'cases', 30, 15, 15, 10, '2026-12-31', 2, 1);
+('FOOD-001', 4, 'Bearbrand 33g', 'boxes', 39, 12, 27, 20, NULL, 1, 1),
+('FOOD-002', 4, 'HOMI BEEF', 'boxes', 30, 23, 7, 15, '2026-03-01', 1, 1),
+('FOOD-003', 4, 'HOMI CHICKEN', 'boxes', 5, 5, 0, 10, NULL, 1, 1),
+('FOOD-004', 4, 'LUCKY ME BEEF', 'boxes', 5, 4, 1, 10, NULL, 1, 1),
+('FOOD-005', 4, 'Nescafe 3n1 Original', 'boxes', 6, 1, 5, 5, NULL, 1, 1),
+('FOOD-006', 4, 'Nescafe 3n1 Creamy White', 'boxes', 3, 2, 1, 5, NULL, 1, 1),
+('FOOD-007', 4, 'Nescafe 3n1 Creamy Latte', 'boxes', 6, 2, 4, 5, NULL, 1, 1),
+('FOOD-008', 4, 'Canned Sardines 155g', 'boxes', 50, 25, 25, 20, '2026-06-30', 1, 1),
+('FOOD-009', 4, 'Rice (25kg sack)', 'sacks', 20, 10, 10, 8, NULL, 1, 1),
+('FOOD-010', 4, 'Bottled Water 500ml (24 bottles/case)', 'cases', 30, 15, 15, 10, '2026-12-31', 1, 1);
 
 -- ============================================================================
 -- INSERT SAMPLE TRANSACTIONS

@@ -1,167 +1,284 @@
 <?php
 require_once 'config.php';
-require_once 'audit_helper.php';
+check_login();
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+$page_title = 'Edit Item';
+
+if (!isset($_GET['id'])) {
+    header('Location: inventory.php');
     exit();
 }
 
-$message = '';
-$error = '';
-$item_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$item_id = (int)$_GET['id'];
 
 // Get item details
-$sql = "SELECT * FROM inventory_items WHERE id = $item_id";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM inventory_items WHERE id = ?");
+$stmt->bind_param("i", $item_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if (!$result || $result->num_rows == 0) {
+if ($result->num_rows === 0) {
+    $_SESSION['error'] = "Item not found";
     header('Location: inventory.php');
     exit();
 }
 
 $item = $result->fetch_assoc();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // GET OLD VALUES BEFORE UPDATE - ADD THIS
-    $old_data = get_item_data($conn, $item_id);
-    
-    $category_id = $conn->real_escape_string($_POST['category_id']);
-    $item_description = $conn->real_escape_string($_POST['item_description']);
-    $unit = $conn->real_escape_string($_POST['unit']);
-    $items_received = intval($_POST['items_received']);
-    $items_distributed = intval($_POST['items_distributed']);
-    $items_on_hand = $items_received - $items_distributed;
-    $expiration_date = !empty($_POST['expiration_date']) ? $_POST['expiration_date'] : NULL;
-    
-    $update_sql = "UPDATE inventory_items SET 
-                   category_id = '$category_id',
-                   item_description = '$item_description',
-                   unit = '$unit',
-                   items_received = $items_received,
-                   items_distributed = $items_distributed,
-                   items_on_hand = $items_on_hand,
-                   expiration_date = " . ($expiration_date ? "'$expiration_date'" : "NULL") . ",
-                   updated_by = {$_SESSION['user_id']}
-                   WHERE id = $item_id";
-    
-    if ($conn->query($update_sql)) {
-        // GET NEW VALUES AFTER UPDATE - ADD THIS
-        $new_data = [
-            'category_id' => $category_id,
-            'item_description' => $item_description,
-            'unit' => $unit,
-            'items_received' => $items_received,
-            'items_distributed' => $items_distributed,
-            'items_on_hand' => $items_on_hand,
-            'expiration_date' => $expiration_date,
-            'updated_by' => $_SESSION['user_id']
-        ];
-        
-        // LOG THE UPDATE WITH BEFORE/AFTER VALUES - ADD THIS
-        log_item_update($conn, $_SESSION['user_id'], $item_id, $old_data, $new_data);
-        
-        $message = 'Item updated successfully!';
-        
-        // Refresh item data
-        $result = $conn->query($sql);
-        $item = $result->fetch_assoc();
-    } else {
-        $error = 'Error updating item: ' . $conn->error;
-    }
-}
+$stmt->close();
 
 // Get categories
-$cat_sql = "SELECT * FROM categories ORDER BY category_name";
-$categories = $conn->query($cat_sql);
+$categories = $conn->query("SELECT id, category_name FROM categories WHERE is_active = 1 ORDER BY category_name");
+
+// Get storage locations
+$storage_locations = $conn->query("SELECT id, location_name FROM storage_locations WHERE is_active = 1 ORDER BY location_name");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $category_id = (int)$_POST['category_id'];
+    $item_description = sanitize_input($_POST['item_description']);
+    $unit = sanitize_input($_POST['unit']);
+    $unit_cost = (float)$_POST['unit_cost'];
+    $minimum_stock_level = (int)$_POST['minimum_stock_level'];
+    $storage_location_id = !empty($_POST['storage_location_id']) ? (int)$_POST['storage_location_id'] : null;
+    $expiration_date = !empty($_POST['expiration_date']) ? $_POST['expiration_date'] : null;
+    
+    $stmt = $conn->prepare("
+        UPDATE inventory_items SET
+            category_id = ?, item_description = ?, unit = ?, unit_cost = ?,
+            minimum_stock_level = ?, storage_location_id = ?, expiration_date = ?, updated_by = ?
+        WHERE id = ?
+    ");
+    
+    $stmt->bind_param("issdiisii", $category_id, $item_description, $unit, $unit_cost, 
+                      $minimum_stock_level, $storage_location_id, $expiration_date, $_SESSION['user_id'], $item_id);
+    
+    if ($stmt->execute()) {
+        log_activity($_SESSION['user_id'], 'update_item', "Updated item: " . $item['item_code']);
+        $_SESSION['success'] = "Item updated successfully!";
+        header('Location: inventory.php');
+        exit();
+    } else {
+        $error = "Failed to update item.";
+    }
+    $stmt->close();
+}
+
+require_once 'header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Item - CDRRMO Inventory System</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<style>
+.inventory-form {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid var(--primary-blue);
+    padding-bottom: 20px;
+}
+.form-header h1 {
+    margin: 0;
+    color: var(--primary-blue);
+    font-size: 28px;
+    font-weight: 700;
+}
+.form-header h2 {
+    margin: 5px 0 0 0;
+    color: var(--gray-700);
+    font-size: 16px;
+    font-weight: 600;
+}
+.form-header h3 {
+    margin: 10px 0 0 0;
+    color: var(--gray-600);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+.inventory-table th {
+    background: var(--primary-blue);
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--gray-300);
+}
+.inventory-table td {
+    padding: 10px;
+    border: 1px solid var(--gray-300);
+    vertical-align: middle;
+}
+.inventory-table textarea {
+    width: 100%;
+    min-height: 60px;
+    resize: vertical;
+    border: 1px solid var(--gray-300);
+    padding: 8px;
+    border-radius: 4px;
+}
+.readonly-field {
+    background: var(--gray-100);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-align: center;
+    padding: 12px !important;
+}
+.info-box {
+    background: var(--light-blue);
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid var(--secondary-blue);
+    margin-bottom: 20px;
+}
+</style>
 
-<body>
-    <?php include 'header_sidebar.php'; ?>
-
-    <div class="main-content">
-    <div class="container">
-        <div class="page-header">
-            <h1>Edit Inventory Item</h1>
-            <a href="inventory.php" class="btn btn-secondary">← Back to Inventory</a>
-        </div>
-
-        <?php if ($message): ?>
-        <div class="alert alert-success"><?php echo $message; ?></div>
-        <?php endif; ?>
-
-        <?php if ($error): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
-        <?php endif; ?>
-
-        <div class="form-container">
-            <form method="POST" action="">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="category_id">Category *</label>
-                        <select id="category_id" name="category_id" required>
-                            <?php while ($cat = $categories->fetch_assoc()): ?>
-                            <option value="<?php echo $cat['id']; ?>"
-                                <?php echo $cat['id'] == $item['category_id'] ? 'selected' : ''; ?>>
-                                <?php echo $cat['category_name']; ?>
-                            </option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="unit">Unit</label>
-                        <input type="text" id="unit" name="unit" value="<?php echo htmlspecialchars($item['unit']); ?>">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="item_description">Item Description *</label>
-                    <textarea id="item_description" name="item_description" rows="3"
-                        required><?php echo htmlspecialchars($item['item_description']); ?></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="items_received">Items Received *</label>
-                        <input type="number" id="items_received" name="items_received"
-                            value="<?php echo $item['items_received']; ?>" min="0" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="items_distributed">Items Distributed</label>
-                        <input type="number" id="items_distributed" name="items_distributed"
-                            value="<?php echo $item['items_distributed']; ?>" min="0">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="expiration_date">Expiration Date</label>
-                        <input type="date" id="expiration_date" name="expiration_date"
-                            value="<?php echo $item['expiration_date']; ?>">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Calculated On Hand: <strong><?php echo $item['items_on_hand']; ?></strong></label>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Update Item</button>
-                    <a href="inventory.php" class="btn btn-light">Cancel</a>
-                </div>
-            </form>
+<div class="inventory-form">
+    <div class="form-header">
+        <h1>PASSI CITY</h1>
+        <h2>DISASTER RISK REDUCTION & MANAGEMENT OFFICE</h2>
+        <h3>INVENTORY OF SUPPLIES - EDIT ITEM</h3>
+    </div>
+    
+    <div class="info-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong style="color: var(--primary-blue); font-size: 16px;">Item Code:</strong>
+                <span style="font-size: 20px; font-weight: 700; color: var(--primary-blue); margin-left: 10px;">
+                    <?php echo htmlspecialchars($item['item_code']); ?>
+                </span>
+            </div>
+            <div style="font-size: 12px; color: var(--gray-600);">
+                <i class="fas fa-info-circle"></i> Stock levels are read-only. Use "Receive" or "Distribute" to update.
+            </div>
         </div>
     </div>
-    </div>
-</body>
+    
+    <?php if (isset($error)): ?>
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
+        </div>
+    <?php endif; ?>
+    
+    <form method="POST" action="">
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                Category *
+            </label>
+            <select name="category_id" class="form-control" required style="font-size: 14px; padding: 10px;">
+                <?php 
+                $categories->data_seek(0);
+                while ($cat = $categories->fetch_assoc()): 
+                ?>
+                    <option value="<?php echo $cat['id']; ?>" <?php echo $cat['id'] == $item['category_id'] ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($cat['category_name']); ?>
+                    </option>
+                <?php endwhile; ?>
+            </select>
+        </div>
+        
+        <!-- Additional Fields -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                    Unit of Measurement *
+                </label>
+                <input type="text" name="unit" class="form-control" required value="<?php echo htmlspecialchars($item['unit'] ?? 'pcs'); ?>" style="padding: 10px;">
+            </div>
+            
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                    Unit Cost (₱) *
+                </label>
+                <input type="number" name="unit_cost" class="form-control" step="0.01" min="0" required value="<?php echo $item['unit_cost'] ?? 0; ?>" style="padding: 10px;">
+            </div>
+            
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                    Minimum Stock Level *
+                </label>
+                <input type="number" name="minimum_stock_level" class="form-control" min="1" required value="<?php echo $item['minimum_stock_level'] ?? 5; ?>" style="padding: 10px;">
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                    Storage Location
+                </label>
+                <select name="storage_location_id" class="form-control" style="padding: 10px;">
+                    <option value="">-- Select Storage Location --</option>
+                    <?php 
+                    $storage_locations->data_seek(0);
+                    while ($loc = $storage_locations->fetch_assoc()): 
+                    ?>
+                        <option value="<?php echo $loc['id']; ?>" <?php echo ($loc['id'] == $item['storage_location_id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($loc['location_name']); ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+            </div>
+            
+            <div class="form-group" style="margin: 0;">
+                <label class="form-label" style="font-weight: 600; margin-bottom: 8px; display: block;">
+                    Expiration Date (Optional)
+                </label>
+                <input type="date" name="expiration_date" class="form-control" value="<?php echo $item['expiration_date'] ?? ''; ?>" style="padding: 10px;">
+                <small style="color: var(--gray-500); font-size: 12px;">Leave blank if item does not expire</small>
+            </div>
+        </div>
+        
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">No.</th>
+                    <th>Item Description</th>
+                    <th style="width: 120px;">No. of items<br>received</th>
+                    <th style="width: 120px;">No. of items<br>distributed</th>
+                    <th style="width: 120px;">No. of items<br>on hand</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center; background: var(--gray-100); font-weight: 600;">1</td>
+                    <td>
+                        <textarea name="item_description" required><?php echo htmlspecialchars($item['item_description']); ?></textarea>
+                    </td>
+                    <td class="readonly-field">
+                        <?php echo number_format($item['items_received']); ?>
+                    </td>
+                    <td class="readonly-field">
+                        <?php echo number_format($item['items_distributed']); ?>
+                    </td>
+                    <td class="readonly-field" style="background: var(--light-blue); color: var(--primary-blue);">
+                        <?php echo number_format($item['items_on_hand']); ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="display: flex; gap: 10px; margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gray-200);">
+            <button type="submit" class="btn btn-primary" style="font-size: 15px; padding: 12px 30px;">
+                <i class="fas fa-save"></i> Update Item
+            </button>
+            <a href="view_item.php?id=<?php echo $item_id; ?>" class="btn btn-secondary" style="font-size: 15px; padding: 12px 30px;">
+                <i class="fas fa-eye"></i> View Details
+            </a>
+            <a href="inventory.php" class="btn btn-secondary" style="font-size: 15px; padding: 12px 30px;">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </form>
+</div>
 
-</html>
+<?php require_once 'footer.php'; ?>
