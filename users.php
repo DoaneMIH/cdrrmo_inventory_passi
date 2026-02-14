@@ -35,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if (empty($errors)) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("INSERT INTO users (username, password, full_name, email, phone, role, plain_password, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssssi", $username, $hashed_password, $full_name, $email, $phone, $role, $password, $_SESSION['user_id']);
+                $stmt = $conn->prepare("INSERT INTO users (username, password, full_name, email, phone, role, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssssssi", $username, $hashed_password, $full_name, $email, $phone, $role, $_SESSION['user_id']);
                 
                 if ($stmt->execute()) {
                     log_activity($_SESSION['user_id'], 'create_user', "Created new user: $username");
@@ -77,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['error'] = "Password must be at least 6 characters";
             } else {
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET password = ?, plain_password = ? WHERE id = ? AND id != ?");
-                $stmt->bind_param("ssii", $hashed_password, $new_password, $user_id, $_SESSION['user_id']);
+                $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ? AND id != ?");
+                $stmt->bind_param("sii", $hashed_password, $user_id, $_SESSION['user_id']);
                 
                 if ($stmt->execute()) {
                     log_activity($_SESSION['user_id'], 'reset_password', "Reset password for user ID: $user_id");

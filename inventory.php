@@ -483,6 +483,109 @@ document.addEventListener('keydown', function(e) {
         closeBulkDeleteModal();
     }
 });
+
+// ── Auto-refresh inventory (2 seconds) ──────────────────────────
+let autoRefreshInterval;
+let lastUpdateTime = Date.now();
+let isUserInteracting = false;
+let interactionTimeout;
+
+function startAutoRefresh() {
+    // Refresh every 2 seconds
+    autoRefreshInterval = setInterval(refreshInventory, 2000);
+}
+
+function pauseAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+    }
+}
+
+function refreshInventory() {
+    // Don't refresh if user is actively typing or interacting
+    if (isUserInteracting) {
+        return;
+    }
+
+    // Build current URL with filters
+    const params = new URLSearchParams(window.location.search);
+    params.set('ajax', '1'); // Add ajax parameter
+    
+    fetch('?' + params.toString(), {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Parse the response
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newTbody = doc.querySelector('tbody');
+        const currentTbody = document.querySelector('tbody');
+        
+        if (newTbody && currentTbody) {
+            // Check if content has changed
+            if (newTbody.innerHTML !== currentTbody.innerHTML) {
+                // Save scroll position
+                const scrollY = window.scrollY;
+                
+                // Smooth fade transition
+                currentTbody.style.transition = 'opacity 0.15s ease';
+                currentTbody.style.opacity = '0.7';
+                
+                setTimeout(() => {
+                    // Update content
+                    currentTbody.innerHTML = newTbody.innerHTML;
+                    
+                    // Restore opacity
+                    currentTbody.style.opacity = '1';
+                    
+                    // Restore scroll position
+                    window.scrollTo(0, scrollY);
+                    
+                    // Reattach event listeners for checkboxes (if admin)
+                    <?php if ($is_admin): ?>
+                    document.querySelectorAll('.row-checkbox').forEach(cb => {
+                        cb.addEventListener('change', updateBulkDeleteBtn);
+                    });
+                    updateBulkDeleteBtn();
+                    <?php endif; ?>
+                }, 150);
+            }
+        }
+    })
+    .catch(error => {
+        console.log('Auto-refresh skipped:', error);
+    });
+}
+
+// Track user interaction
+document.addEventListener('input', function() {
+    isUserInteracting = true;
+    clearTimeout(interactionTimeout);
+    
+    // Resume auto-refresh 2 seconds after user stops typing
+    interactionTimeout = setTimeout(() => {
+        isUserInteracting = false;
+    }, 2000);
+});
+
+// Start auto-refresh on page load
+document.addEventListener('DOMContentLoaded', function() {
+    startAutoRefresh();
+});
+
+// Pause when page is hidden, resume when visible
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        pauseAutoRefresh();
+    } else {
+        startAutoRefresh();
+    }
+});
 </script>
 <?php endif; ?>
 
