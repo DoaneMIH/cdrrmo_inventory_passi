@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Add New Item';
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <style>
@@ -271,4 +271,4 @@ function calculateOnHand() {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

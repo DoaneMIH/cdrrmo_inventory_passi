@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_admin(); // Only admins can delete
 
 if (!isset($_GET['id'])) {

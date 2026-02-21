@@ -19,6 +19,9 @@ define('MAX_FILE_SIZE', 5242880); // 5MB
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 0); // Set to 1 if using HTTPS
+
+ini_set('session.gc_maxlifetime', 3600); // 1 hour
+ini_set('session.cookie_lifetime', 3600); // 1 hour
 session_start();
 
 // Database Connection
@@ -107,6 +110,12 @@ function generate_token() {
 }
 
 function check_login() {
+    // Prevent browser from caching protected pages
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Cache-Control: post-check=0, pre-check=0', false);
+    header('Pragma: no-cache');
+    header('Expires: Sat, 01 Jan 2000 00:00:00 GMT');
+
     if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
         header('Location: login.php');
         exit();

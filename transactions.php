@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Transactions';
@@ -136,7 +136,7 @@ $stats['total_distributed'] = $result['total_distributed'] ?? 0;
 $stats['total_value'] = $result['total_value'] ?? 0;
 $stmt->close();
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <!-- Statistics Cards -->
@@ -279,8 +279,7 @@ require_once 'header.php';
                     <th>Transaction Code</th>
                     <th>Date</th>
                     <th>Type</th>
-                    <th>Item Code</th>
-                    <th>Description</th>
+                    <th>Item</th>
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Unit Cost</th>
@@ -336,12 +335,13 @@ require_once 'header.php';
                                     <?php echo ucfirst($row['transaction_type']); ?>
                                 </span>
                             </td>
-                            <td><strong><?php echo htmlspecialchars($row['item_code']); ?></strong></td>
                             <td>
-                                <?php 
-                                $desc = htmlspecialchars($row['item_description']);
-                                echo strlen($desc) > 50 ? substr($desc, 0, 50) . '...' : $desc;
-                                ?>
+                                <div style="font-weight: 600; color: var(--gray-800); margin-bottom: 2px;">
+                                    <?php echo htmlspecialchars($row['item_code']); ?>
+                                </div>
+                                <div style="font-size: 13px; color: var(--gray-600);">
+                                    <?php echo htmlspecialchars($row['item_description']); ?>
+                                </div>
                             </td>
                             <td>
                                 <span class="badge" style="background-color: <?php echo htmlspecialchars($row['category_color'] ?? '#3b82f6'); ?>20; color: <?php echo htmlspecialchars($row['category_color'] ?? '#3b82f6'); ?>;">
@@ -388,6 +388,11 @@ require_once 'header.php';
                                 <button class="btn btn-sm btn-primary" onclick="viewTransaction(<?php echo $row['id']; ?>)" title="View Details">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <?php if ($row['transaction_type'] === 'distributed'): ?>
+                                    <button class="btn btn-sm btn-success" onclick="printCustodianSlip(<?php echo $row['id']; ?>)" title="Print Custodian Slip">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -586,6 +591,10 @@ function exportTableToCSV(tableId, filename) {
         document.body.removeChild(link);
     }
 }
+
+function printCustodianSlip(transactionId) {
+    window.open('print_custodian_slip.php?id=' + transactionId, '_blank', 'width=800,height=600');
+}
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

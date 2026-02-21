@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'View Item';
@@ -52,7 +52,7 @@ $transactions = $conn->query("
     LIMIT 10
 ");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <style>
@@ -352,4 +352,4 @@ require_once 'header.php';
     </div>
 </div>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

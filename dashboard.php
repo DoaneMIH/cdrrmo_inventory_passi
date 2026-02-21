@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Dashboard';
@@ -76,7 +76,7 @@ $expiring_items = $conn->query("
     LIMIT 5
 ");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <!-- Dashboard Cards -->
@@ -256,4 +256,4 @@ require_once 'header.php';
 </div>
 <?php endif; ?>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

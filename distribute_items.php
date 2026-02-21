@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Distribute Items';
@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $purpose = sanitize_input($_POST['purpose']);
     $reference_number = sanitize_input($_POST['reference_number']);
     $notes = sanitize_input($_POST['notes']);
+    $is_borrowed = isset($_POST['is_borrowed']) ? 1 : 0;
     
     // Check available stock
     $stock_check = $conn->prepare("SELECT items_on_hand, unit_cost FROM inventory_items WHERE id = ?");
@@ -55,15 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO transactions (
                 transaction_code, item_id, transaction_type, quantity, unit_cost,
                 transaction_date, recipient_name, recipient_organization, purpose,
-                reference_number, notes, created_by
-            ) VALUES (?, ?, 'distributed', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                reference_number, notes, is_borrowed, created_by
+            ) VALUES (?, ?, 'distributed', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
         
         $stmt->bind_param(
-            "siidssssssi",
+            "siidssssssii",
             $transaction_code, $item_id, $quantity, $unit_cost, $transaction_date,
             $recipient_name, $recipient_organization, $purpose, $reference_number,
-            $notes, $_SESSION['user_id']
+            $notes, $is_borrowed, $_SESSION['user_id']
         );
         
         if ($stmt->execute()) {
@@ -91,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <?php if (isset($_SESSION['success'])): ?>
@@ -186,9 +187,21 @@ require_once 'header.php';
             </div>
             
             <div class="form-group">
-                <label class="form-label">Reference Number</label>
+                <label class="form-label">Requisition and Issue Slip (RIS) No.</label>
                 <input type="text" name="reference_number" class="form-control" 
                     placeholder="Distribution slip or reference number">
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="is_borrowed" id="is_borrowed" value="1" style="width: 18px; height: 18px;">
+                    <span style="font-weight: 600; color: var(--primary-blue);">
+                        <i class="fas fa-exchange-alt"></i> This is a borrowed item (will be returned later)
+                    </span>
+                </label>
+                <small style="color: var(--gray-500); font-size: 12px; margin-left: 28px;">
+                    Check this box if the item will be returned. This allows tracking of borrowed items.
+                </small>
             </div>
             
             <div class="form-group">
@@ -239,4 +252,4 @@ updateItemDetails();
 <?php endif; ?>
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Category Report';
@@ -47,7 +47,7 @@ while ($row = $categories->fetch_assoc()) {
     $grand_totals['low_stock'] += $row['low_stock_count'];
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <style>
@@ -135,14 +135,14 @@ require_once 'header.php';
         <table style="width: 100%; border-collapse: collapse;" id="categoryTable">
             <thead>
                 <tr style="background: var(--primary-blue); color: white;">
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Category</th>
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Code</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Item Count</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">On Hand</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Received</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Distributed</th>
-                    <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Total Value</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Low Stock</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Category</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Code</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Item Count</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">On Hand</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Received</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Distributed</th>
+                    <th style="padding: 12px; text-align: right; border: 1px solid #ddd;color: white;">Total Value</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Low Stock</th>
                 </tr>
             </thead>
             <tbody>
@@ -220,4 +220,4 @@ function exportToCSV() {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

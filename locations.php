@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Storage Locations';
@@ -133,7 +133,7 @@ $locations = $conn->query("
     ORDER BY sl.is_active DESC, sl.location_name
 ");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 <?php if ($is_admin): ?>
 <div style="margin-bottom: 20px; margin-right: 5px; text-align: right;">
@@ -156,9 +156,9 @@ require_once 'header.php';
 <?php endif; ?>
 
 <div class="table-container">
-    <div class="table-header">
+    <!-- <div class="table-header">
         <h3 class="table-title">Storage Locations</h3>
-    </div>
+    </div> -->
     <div class="table-responsive">
         <table>
             <thead>
@@ -482,4 +482,4 @@ window.onclick = function(event) {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

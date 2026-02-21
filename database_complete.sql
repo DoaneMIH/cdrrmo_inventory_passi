@@ -162,7 +162,7 @@ CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     transaction_code VARCHAR(50) UNIQUE COMMENT 'Unique transaction reference number',
     item_id INT NOT NULL,
-    transaction_type ENUM('received', 'distributed', 'adjustment', 'return', 'damaged', 'expired') NOT NULL,
+    transaction_type ENUM('received', 'distributed', 'returned', 'adjustment', 'return', 'damaged', 'expired') NOT NULL,
     
     -- Quantity tracking
     quantity INT NOT NULL COMMENT 'Positive for additions, negative for deductions',
@@ -190,6 +190,11 @@ CREATE TABLE transactions (
     approved_by INT COMMENT 'User who approved the transaction',
     approved_at DATETIME,
     
+    -- Borrow/Return functionality
+    is_borrowed TINYINT(1) DEFAULT 0 COMMENT 'Is this a borrowed item (1=yes, 0=no)',
+    parent_transaction_id INT NULL COMMENT 'References original transaction for returns',
+    return_condition VARCHAR(50) NULL COMMENT 'Condition of returned items (Good/Fair/Damaged)',
+    
     -- Audit fields
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT,
@@ -198,12 +203,15 @@ CREATE TABLE transactions (
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE SET NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (parent_transaction_id) REFERENCES transactions(id) ON DELETE SET NULL,
     
     INDEX idx_transaction_code (transaction_code),
     INDEX idx_item_id (item_id),
     INDEX idx_transaction_type (transaction_type),
     INDEX idx_transaction_date (transaction_date),
-    INDEX idx_supplier_id (supplier_id)
+    INDEX idx_supplier_id (supplier_id),
+    INDEX idx_is_borrowed (is_borrowed),
+    INDEX idx_parent_transaction (parent_transaction_id)
 ) ENGINE=InnoDB COMMENT='All inventory transactions and movements';
 
 -- ============================================================================
@@ -600,6 +608,55 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- ============================================================================
+-- VIEW: v_borrowed_items - Track borrowed items with return status
+-- ============================================================================
+CREATE OR REPLACE VIEW v_borrowed_items AS
+SELECT 
+    t.id,
+    t.transaction_code,
+    t.transaction_date,
+    t.item_id,
+    i.item_code,
+    i.item_description,
+    i.unit,
+    t.quantity as borrowed_quantity,
+    t.recipient_name,
+    t.recipient_organization,
+    t.purpose,
+    COALESCE(
+        (SELECT SUM(quantity) 
+         FROM transactions 
+         WHERE parent_transaction_id = t.id 
+         AND transaction_type = 'returned'),
+        0
+    ) as returned_quantity,
+    (t.quantity - COALESCE(
+        (SELECT SUM(quantity) 
+         FROM transactions 
+         WHERE parent_transaction_id = t.id 
+         AND transaction_type = 'returned'),
+        0
+    )) as remaining_quantity,
+    CASE 
+        WHEN (t.quantity - COALESCE(
+            (SELECT SUM(quantity) 
+             FROM transactions 
+             WHERE parent_transaction_id = t.id 
+             AND transaction_type = 'returned'),
+            0
+        )) = 0 THEN 'Fully Returned'
+        WHEN (SELECT SUM(quantity) 
+              FROM transactions 
+              WHERE parent_transaction_id = t.id 
+              AND transaction_type = 'returned') > 0 THEN 'Partially Returned'
+        ELSE 'Not Returned'
+    END as return_status
+FROM transactions t
+JOIN inventory_items i ON t.item_id = i.id
+WHERE t.transaction_type = 'distributed'
+AND t.is_borrowed = 1;
 
 -- ============================================================================
 -- GRANT PERMISSIONS (Adjust based on your setup)

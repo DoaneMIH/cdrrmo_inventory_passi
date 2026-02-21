@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Supplier Report';
@@ -38,7 +38,7 @@ while ($row = $suppliers->fetch_assoc()) {
     $grand_totals['value'] += $row['total_value'];
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <style>
@@ -113,13 +113,13 @@ require_once 'header.php';
         <table style="width: 100%; border-collapse: collapse;" id="supplierTable">
             <thead>
                 <tr style="background: var(--primary-blue); color: white;">
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Supplier Name</th>
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Contact Person</th>
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Phone</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Transactions</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Items Received</th>
-                    <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Total Value</th>
-                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Last Transaction</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Supplier Name</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Contact Person</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Phone</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Transactions</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Items Received</th>
+                    <th style="padding: 12px; text-align: right; border: 1px solid #ddd;color: white;">Total Value</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Last Transaction</th>
                 </tr>
             </thead>
             <tbody>
@@ -209,4 +209,4 @@ function exportToCSV() {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

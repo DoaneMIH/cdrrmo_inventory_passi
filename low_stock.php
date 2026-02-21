@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Low Stock Alert';
@@ -34,7 +34,7 @@ while ($row = $temp_result->fetch_assoc()) {
     }
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <!-- Alert Summary Cards -->
@@ -220,4 +220,4 @@ require_once 'header.php';
 </div>
 <?php endif; ?>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

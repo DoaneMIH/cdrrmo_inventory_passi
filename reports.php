@@ -1,10 +1,10 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Reports';
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <!-- <div style="margin-bottom: 30px;">
@@ -27,7 +27,7 @@ require_once 'header.php';
                 <div>
                     <h3 style="margin: 0; color: var(--gray-800);">Inventory Summary</h3>
                     <p style="margin: 5px 0 0 0; color: var(--gray-500); font-size: 13px;">
-                        Complete inventory status
+                        Complete inventory
                     </p>
                 </div>
             </div>
@@ -122,7 +122,7 @@ require_once 'header.php';
             <p style="color: var(--gray-600); font-size: 14px; margin-bottom: 15px;">
                 Calculate total inventory value, costs, and financial summaries.
             </p>
-            <a href="report_valuation.php" class="btn btn-danger btn-block">
+            <a href="report_evaluation.php" class="btn btn-danger btn-block">
                 <i class="fas fa-file-alt"></i> Generate Report
             </a>
         </div>
@@ -145,6 +145,50 @@ require_once 'header.php';
                 View transaction history and totals for each supplier.
             </p>
             <a href="report_suppliers.php" class="btn btn-primary btn-block" style="background: #8b5cf6; border-color: #8b5cf6;">
+                <i class="fas fa-file-alt"></i> Generate Report
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div style="padding: 25px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #059669, #047857); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: var(--gray-800);">Government Form</h3>
+                    <p style="margin: 5px 0 0 0; color: var(--gray-500); font-size: 13px;">
+                        Official supplies report
+                    </p>
+                </div>
+            </div>
+            <p style="color: var(--gray-600); font-size: 14px; margin-bottom: 15px;">
+                Report of Supplies and Materials Issued - Government standard format.
+            </p>
+            <a href="report_supplies_materials.php" class="btn btn-success btn-block">
+                <i class="fas fa-print"></i> Generate Form
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div style="padding: 25px;">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #0891b2, #0e7490); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; color: var(--gray-800);">Custodian Slip Report</h3>
+                    <p style="margin: 5px 0 0 0; color: var(--gray-500); font-size: 13px;">
+                        Comprehensive slip report
+                    </p>
+                </div>
+            </div>
+            <p style="color: var(--gray-600); font-size: 14px; margin-bottom: 15px;">
+                View all distributed and returned items with filtering options.
+            </p>
+            <a href="custodian_slip_report.php" class="btn btn-primary btn-block" style="background: #0891b2; border-color: #0891b2;">
                 <i class="fas fa-file-alt"></i> Generate Report
             </a>
         </div>
@@ -243,4 +287,4 @@ $trans_data = $trans_stats->fetch_assoc();
     </div>
 </div>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

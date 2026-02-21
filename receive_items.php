@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Receive Items';
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <?php if (isset($_SESSION['success'])): ?>
@@ -181,7 +181,7 @@ require_once 'header.php';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div class="form-group">
-                    <label class="form-label">Reference Number</label>
+                    <label class="form-label">RIS No.</label>
                     <input type="text" name="reference_number" class="form-control" 
                         placeholder="PO/DR/Invoice number">
                 </div>
@@ -255,4 +255,4 @@ updateItemDetails();
 <?php endif; ?>
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

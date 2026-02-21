@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_admin();
 
 $page_title = 'User Management';
@@ -152,7 +152,7 @@ $users = $conn->query("
     ORDER BY u.created_at DESC
 ");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <div style="margin-bottom: 20px; margin-right: 5px; text-align: right;">
@@ -174,9 +174,9 @@ require_once 'header.php';
 <?php endif; ?>
 
 <div class="table-container">
-    <div class="table-header">
+    <!-- <div class="table-header">
         <h3 class="table-title">System Users</h3>
-    </div>
+    </div> -->
     <div class="table-responsive">
         <table>
             <thead>
@@ -554,4 +554,4 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

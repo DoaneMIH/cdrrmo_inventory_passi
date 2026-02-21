@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Categories';
@@ -145,7 +145,7 @@ $categories = $conn->query("
     ORDER BY c.is_active DESC, c.display_order, c.category_name
 ");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 <?php if ($is_admin): ?>
 <div style="margin-bottom: 20px; margin-right: 5px; text-align: right;">
@@ -514,4 +514,4 @@ window.onclick = function(event) {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

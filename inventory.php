@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Inventory Items';
@@ -124,7 +124,7 @@ $storage_locations = $conn->query("SELECT id, location_name FROM storage_locatio
 $flash = isset($_SESSION['flash_message']) ? $_SESSION['flash_message'] : null;
 unset($_SESSION['flash_message']);
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <?php if ($flash): ?>
@@ -589,4 +589,4 @@ document.addEventListener('visibilitychange', function() {
 </script>
 <?php endif; ?>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

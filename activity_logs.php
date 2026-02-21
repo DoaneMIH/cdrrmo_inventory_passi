@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_admin(); // Only admins can view logs
 
 $page_title = 'Activity Logs';
@@ -100,7 +100,7 @@ $users = $conn->query("SELECT id, full_name FROM users ORDER BY full_name");
 // Get unique actions for filter
 $actions = $conn->query("SELECT DISTINCT action FROM audit_log ORDER BY action");
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <!-- Filters -->
@@ -297,4 +297,4 @@ require_once 'header.php';
     <?php endif; ?>
 </div>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>

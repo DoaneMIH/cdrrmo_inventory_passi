@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'includes/config.php';
 check_login();
 
 $page_title = 'Transaction Report';
@@ -80,7 +80,7 @@ while ($row = $transactions->fetch_assoc()) {
     $totals['value'] += $row['total_cost'];
 }
 
-require_once 'header.php';
+require_once 'includes/header.php';
 ?>
 
 <style>
@@ -193,15 +193,15 @@ require_once 'header.php';
         <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="transactionsTable">
             <thead>
                 <tr style="background: var(--primary-blue); color: white;">
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Date</th>
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Transaction Code</th>
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Item Code</th>
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Description</th>
-                    <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Type</th>
-                    <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Quantity</th>
-                    <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Unit Cost</th>
-                    <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Total</th>
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Supplier/Recipient</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd; color: white;">Date</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Transaction Code</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Item Code</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Description</th>
+                    <th style="padding: 10px; text-align: center; border: 1px solid #ddd;color: white;">Type</th>
+                    <th style="padding: 10px; text-align: center; border: 1px solid #ddd;color: white;">Quantity</th>
+                    <th style="padding: 10px; text-align: right; border: 1px solid #ddd;color: white;">Unit Cost</th>
+                    <th style="padding: 10px; text-align: right; border: 1px solid #ddd;color: white;">Total</th>
+                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Supplier/Recipient</th>
                 </tr>
             </thead>
             <tbody>
@@ -273,4 +273,4 @@ function exportToCSV() {
 }
 </script>
 
-<?php require_once 'footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>
