@@ -74,7 +74,11 @@ if ($location_filter) {
 }
 
 if ($status_filter === 'low_stock') {
-    $where[] = "i.items_on_hand <= i.minimum_stock_level";
+    $where[] = "i.items_on_hand > 0 AND i.items_on_hand <= i.minimum_stock_level";
+} elseif ($status_filter === 'out_of_stock') {
+    $where[] = "i.items_on_hand <= 0";
+} elseif ($status_filter === 'in_stock') {
+    $where[] = "i.items_on_hand > i.minimum_stock_level";
 }
 
 $where_clause = implode(' AND ', $where);
@@ -145,10 +149,12 @@ require_once 'includes/header.php';
                 <i class="fas fa-search search-icon"></i>
                 <input 
                     type="text" 
+                    id="searchInput"
                     name="search" 
                     class="search-input" 
                     placeholder="Search items..."
                     value="<?php echo htmlspecialchars($search); ?>"
+                    autocomplete="off"
                 >
             </div>
             
@@ -172,7 +178,9 @@ require_once 'includes/header.php';
             
             <select name="status" class="form-control" style="width: 150px;">
                 <option value="">All Status</option>
+                <option value="in_stock" <?php echo $status_filter === 'in_stock' ? 'selected' : ''; ?>>In Stock</option>
                 <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Low Stock</option>
+                <option value="out_of_stock" <?php echo $status_filter === 'out_of_stock' ? 'selected' : ''; ?>>Out of Stock</option>
             </select>
             
             <button type="submit" class="btn btn-primary">
@@ -484,6 +492,62 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+// ── Live table search (filters rows as you type) ───────────────
+(function () {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+
+    let debounceTimer = null;
+
+    function fetchTable(q) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('search', q);
+        params.delete('page'); // reset to page 1 on new search
+
+        fetch('inventory.php?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.text())
+        .then(html => {
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Update tbody
+            const newTbody = doc.querySelector('tbody');
+            const curTbody = document.querySelector('tbody');
+            if (newTbody && curTbody) {
+                curTbody.style.opacity = '0.5';
+                curTbody.innerHTML = newTbody.innerHTML;
+                curTbody.style.opacity = '1';
+                <?php if ($is_admin): ?>
+                document.querySelectorAll('.row-checkbox').forEach(cb => {
+                    cb.addEventListener('change', updateBulkDeleteBtn);
+                });
+                updateBulkDeleteBtn();
+                <?php endif; ?>
+            }
+
+            // Update title count
+            const newTitle = doc.querySelector('.table-title');
+            const curTitle = document.querySelector('.table-title');
+            if (newTitle && curTitle) curTitle.innerHTML = newTitle.innerHTML;
+
+            // Update pagination
+            const newPag = doc.querySelector('.pagination');
+            const curPag = document.querySelector('.pagination');
+            if (curPag) curPag.replaceWith(newPag || document.createTextNode(''));
+            else if (newPag) document.querySelector('.table-container').appendChild(newPag);
+        })
+        .catch(() => {});
+    }
+
+    const parser = new DOMParser();
+
+    input.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => fetchTable(input.value.trim()), 250);
+    });
+})();
+
 // ── Auto-refresh inventory (2 seconds) ──────────────────────────
 let autoRefreshInterval;
 let lastUpdateTime = Date.now();
@@ -510,6 +574,13 @@ function refreshInventory() {
 
     // Build current URL with filters
     const params = new URLSearchParams(window.location.search);
+
+    // Keep whatever the user has typed in the search box
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim()) {
+        params.set('search', searchInput.value.trim());
+    }
+
     params.set('ajax', '1'); // Add ajax parameter
     
     fetch('?' + params.toString(), {

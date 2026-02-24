@@ -112,23 +112,38 @@ require_once 'includes/header.php';
         <form method="POST" action="" id="receiveForm">
             <div class="form-group">
                 <label class="form-label">Select Item *</label>
-                <select name="item_id" id="item_id" class="form-control" required onchange="updateItemDetails()">
-                    <option value="">-- Select an item --</option>
-                    <?php 
-                    $items->data_seek(0);
-                    while ($item = $items->fetch_assoc()): 
-                    ?>
-                        <option value="<?php echo $item['id']; ?>" 
-                            data-unit="<?php echo htmlspecialchars($item['unit']); ?>"
-                            data-unit-cost="<?php echo $item['unit_cost']; ?>"
-                            <?php echo $item['id'] == $selected_item_id ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($item['item_code']); ?> - 
-                            <?php echo htmlspecialchars(substr($item['item_description'], 0, 60)); ?>
-                            (<?php echo htmlspecialchars($item['category_name']); ?>)
-                        </option>
-                    <?php endwhile; ?>
-                </select>
+                <div style="position: relative;" id="itemComboWrapper">
+                    <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; pointer-events:none; z-index:1;"></i>
+                    <input
+                        type="text"
+                        id="itemSearch"
+                        class="form-control"
+                        placeholder="Type item code or name to search..."
+                        autocomplete="off"
+                        style="padding-left: 34px; padding-right: 34px;"
+                        required
+                    >
+                    <i class="fas fa-times" id="itemClearBtn" onclick="clearItemSearch()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; cursor:pointer; display:none;"></i>
+                    <input type="hidden" name="item_id" id="item_id" required>
+                    <!-- Suggestions dropdown -->
+                    <ul id="itemDropdown" style="
+                        display:none;
+                        position:absolute;
+                        top:calc(100% + 4px);
+                        left:0; right:0;
+                        background:#fff;
+                        border:1px solid #e5e7eb;
+                        border-radius:8px;
+                        box-shadow:0 8px 24px rgba(0,0,0,0.12);
+                        list-style:none;
+                        margin:0; padding:4px 0;
+                        z-index:9999;
+                        max-height:260px;
+                        overflow-y:auto;
+                    "></ul>
+                </div>
             </div>
+
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
@@ -220,39 +235,133 @@ require_once 'includes/header.php';
 </div>
 
 <script>
-function updateItemDetails() {
-    const select = document.getElementById('item_id');
-    const selectedOption = select.options[select.selectedIndex];
-    const unit = selectedOption.getAttribute('data-unit') || '-';
-    const unitCost = selectedOption.getAttribute('data-unit-cost') || '0.00';
-    
-    document.getElementById('unitText').textContent = unit;
-    
-    // Auto-fill unit cost
-    const unitCostInput = document.querySelector('input[name="unit_cost"]');
-    unitCostInput.value = parseFloat(unitCost).toFixed(2);
-    
-    calculateTotal();
-}
+// ── Item data from PHP ─────────────────────────────────────────
+const ITEMS = [
+<?php 
+$items->data_seek(0);
+while ($item = $items->fetch_assoc()):
+    $label = $item['item_code'] . ' - ' . substr($item['item_description'], 0, 60) . ' (' . $item['category_name'] . ')';
+?>
+  { id: <?php echo (int)$item['id']; ?>,
+    label: <?php echo json_encode($label); ?>,
+    unit: <?php echo json_encode($item['unit'] ?? 'pcs'); ?>,
+    unitCost: <?php echo (float)$item['unit_cost']; ?>,
+    search: <?php echo json_encode(strtolower($item['item_code'] . ' ' . $item['item_description'] . ' ' . $item['category_name'])); ?> },
+<?php endwhile; ?>
+];
+
+// ── Combobox logic ─────────────────────────────────────────────
+(function(){
+    const input   = document.getElementById('itemSearch');
+    const hidden  = document.getElementById('item_id');
+    const dropdown= document.getElementById('itemDropdown');
+    const clearBtn= document.getElementById('itemClearBtn');
+    let activeIdx = -1;
+    let filtered  = [];
+
+    // Pre-select if coming from item page
+    <?php if ($selected_item_id): ?>
+    const preItem = ITEMS.find(i => i.id === <?php echo (int)$selected_item_id; ?>);
+    if (preItem) selectItem(preItem);
+    <?php endif; ?>
+
+    function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    function highlight(text, q){
+        if(!q) return esc(text);
+        const i = text.toLowerCase().indexOf(q.toLowerCase());
+        if(i === -1) return esc(text);
+        return esc(text.slice(0,i)) + '<mark style="background:#fef9c3;border-radius:2px;padding:0 1px;">' + esc(text.slice(i,i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
+    }
+
+    function openDropdown(q){
+        filtered = q ? ITEMS.filter(it => it.search.includes(q.toLowerCase())) : ITEMS;
+        activeIdx = -1;
+        dropdown.innerHTML = '';
+        if(filtered.length === 0){
+            dropdown.innerHTML = '<li style="padding:10px 14px;color:#9ca3af;font-size:13px;">No items found.</li>';
+        } else {
+            filtered.forEach(function(it, i){
+                const li = document.createElement('li');
+                li.style.cssText = 'padding:9px 14px;cursor:pointer;font-size:13.5px;border-bottom:1px solid #f3f4f6;transition:background 0.1s;';
+                li.innerHTML = highlight(it.label, q);
+                li.addEventListener('mouseenter', ()=> setActive(i));
+                li.addEventListener('mousedown', (e)=>{ e.preventDefault(); selectItem(it); });
+                dropdown.appendChild(li);
+            });
+        }
+        dropdown.style.display = 'block';
+    }
+
+    function setActive(i){
+        const lis = dropdown.querySelectorAll('li');
+        lis.forEach(l => l.style.background = '');
+        activeIdx = i;
+        if(i >= 0 && lis[i]) { lis[i].style.background = '#f0f9ff'; lis[i].scrollIntoView({block:'nearest'}); }
+    }
+
+    function closeDropdown(){ dropdown.style.display = 'none'; activeIdx = -1; }
+
+    function selectItem(it){
+        input.value  = it.label;
+        hidden.value = it.id;
+        clearBtn.style.display = 'inline';
+        closeDropdown();
+        // Trigger details update
+        document.getElementById('unitText').textContent = it.unit;
+        const unitCostInput = document.querySelector('input[name="unit_cost"]');
+        unitCostInput.value = parseFloat(it.unitCost).toFixed(2);
+        calculateTotal();
+    }
+
+    window.clearItemSearch = function(){
+        input.value  = '';
+        hidden.value = '';
+        clearBtn.style.display = 'none';
+        document.getElementById('unitText').textContent = '-';
+        document.querySelector('input[name="unit_cost"]').value = '';
+        document.getElementById('totalCost').textContent = '0.00';
+        input.focus();
+    };
+
+    input.addEventListener('input', function(){
+        clearBtn.style.display = this.value ? 'inline' : 'none';
+        hidden.value = ''; // clear selection when user edits
+        openDropdown(this.value.trim());
+    });
+    input.addEventListener('focus', function(){
+        if(!hidden.value) openDropdown(this.value.trim());
+    });
+    input.addEventListener('keydown', function(e){
+        const lis = dropdown.querySelectorAll('li');
+        if(dropdown.style.display === 'none'){
+            if(e.key === 'ArrowDown'){ openDropdown(this.value.trim()); } return;
+        }
+        if(e.key === 'ArrowDown'){ e.preventDefault(); setActive(Math.min(activeIdx+1, lis.length-1)); }
+        else if(e.key === 'ArrowUp'){ e.preventDefault(); setActive(Math.max(activeIdx-1, 0)); }
+        else if(e.key === 'Enter' && activeIdx >= 0 && filtered[activeIdx]){
+            e.preventDefault(); selectItem(filtered[activeIdx]);
+        } else if(e.key === 'Escape'){ closeDropdown(); }
+    });
+    document.addEventListener('click', function(e){
+        if(!input.contains(e.target) && !dropdown.contains(e.target)) closeDropdown();
+    });
+})();
+
+function updateItemDetails(){} // kept for compatibility (no longer used)
 
 function calculateTotal() {
     const quantity = parseFloat(document.querySelector('input[name="quantity"]').value) || 0;
     const unitCost = parseFloat(document.querySelector('input[name="unit_cost"]').value) || 0;
-    const total = quantity * unitCost;
-    
-    document.getElementById('totalCost').textContent = total.toFixed(2);
+    document.getElementById('totalCost').textContent = (quantity * unitCost).toFixed(2);
 }
 
 function resetForm() {
     document.getElementById('receiveForm').reset();
     document.getElementById('unitText').textContent = '-';
     document.getElementById('totalCost').textContent = '0.00';
+    document.getElementById('itemClearBtn').style.display = 'none';
 }
-
-// Initialize if item is pre-selected
-<?php if ($selected_item_id): ?>
-updateItemDetails();
-<?php endif; ?>
 </script>
 
 <?php require_once 'includes/footer.php'; ?>

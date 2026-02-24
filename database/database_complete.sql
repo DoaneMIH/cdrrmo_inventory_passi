@@ -279,6 +279,33 @@ CREATE TABLE system_settings (
 ) ENGINE=InnoDB COMMENT='System configuration settings';
 
 -- ============================================================================
+-- 11. USER FEEDBACK TABLE - User feedback and support tickets
+-- ============================================================================
+DROP TABLE IF EXISTS user_feedback;
+CREATE TABLE user_feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    feedback_type ENUM('bug', 'suggestion', 'complaint', 'praise', 'other') DEFAULT 'suggestion',
+    subject VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    status ENUM('pending', 'reviewing', 'resolved', 'closed') DEFAULT 'pending',
+    admin_response TEXT NULL,
+    responded_by INT NULL,
+    responded_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (responded_by) REFERENCES users(id) ON DELETE SET NULL,
+    
+    INDEX idx_user_id (user_id),
+    INDEX idx_status (status),
+    INDEX idx_feedback_type (feedback_type),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB COMMENT='User feedback and support tickets';
+
+-- ============================================================================
 -- INSERT DEFAULT DATA
 -- ============================================================================
 
@@ -293,7 +320,7 @@ INSERT INTO categories (category_name, category_code, description, icon, color, 
 INSERT INTO storage_locations (location_name, location_code, description) VALUES
 ('Office Storage', 'OFFICE', 'CDRRMO Office storage'),
 ('Gabaldon Storage', 'GABALDON', 'Gabaldon storage facility'),
-('Office Storage', 'CITYHALL', 'City Hall storage area');
+('City Hall Storage', 'CITYHALL', 'City Hall storage area');
 
 -- Insert default admin user (username: admin, password: admin123)
 INSERT INTO users (username, password, full_name, email, role, is_active, created_by) VALUES
@@ -673,3 +700,4 @@ SELECT COUNT(*) AS total_users FROM users;
 SELECT COUNT(*) AS total_categories FROM categories;
 SELECT COUNT(*) AS total_items FROM inventory_items;
 SELECT COUNT(*) AS total_transactions FROM transactions;
+SELECT COUNT(*) AS total_feedback FROM user_feedback;
