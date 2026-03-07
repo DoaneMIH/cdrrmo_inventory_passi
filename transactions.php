@@ -261,14 +261,16 @@ require_once 'includes/header.php';
 
 <!-- Transactions Table -->
 <div class="table-container">
+<!-- Transactions Table -->
+<div class="table-container">
     <div class="table-header">
         <h3 class="table-title">Transaction History (<?php echo number_format($total); ?> records)</h3>
         <div style="display: flex; gap: 10px;">
-            <button class="btn btn-sm btn-primary" onclick="printTable('transactionsTable')">
+            <button class="btn btn-sm btn-primary" onclick="printTransactions()">
                 <i class="fas fa-print"></i> Print
             </button>
-            <button class="btn btn-sm btn-success" onclick="exportTableToCSV('transactionsTable', 'transactions_<?php echo date('Y-m-d'); ?>.csv')">
-                <i class="fas fa-download"></i> Export CSV
+            <button class="btn btn-sm btn-success" onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> Export Excel
             </button>
         </div>
     </div>
@@ -283,8 +285,7 @@ require_once 'includes/header.php';
                     <th>Category</th>
                     <th>Quantity</th>
                     <th>Unit Cost</th>
-                    <th>Total Cost</th>
-                    <th>Supplier/Recipient</th>
+                    <!-- <th>Supplier/Recipient</th> -->
                     <th>Created By</th>
                     <th>Actions</th>
                 </tr>
@@ -361,12 +362,7 @@ require_once 'includes/header.php';
                                 <?php echo htmlspecialchars($row['unit']); ?>
                             </td>
                             <td>₱<?php echo number_format($row['unit_cost'], 2); ?></td>
-                            <td>
-                                <strong style="color: var(--primary-blue);">
-                                    ₱<?php echo number_format($row['total_cost'], 2); ?>
-                                </strong>
-                            </td>
-                            <td>
+                            <!-- <td>
                                 <?php 
                                 if ($row['transaction_type'] === 'received') {
                                     echo '<i class="fas fa-truck" style="color: var(--gray-400);"></i> ';
@@ -382,7 +378,7 @@ require_once 'includes/header.php';
                                     echo '-';
                                 }
                                 ?>
-                            </td>
+                            </td> -->
                             <td><?php echo htmlspecialchars($row['created_by_name'] ?? 'System'); ?></td>
                             <td>
                                 <button class="btn btn-sm btn-primary" onclick="viewTransaction(<?php echo $row['id']; ?>)" title="View Details">
@@ -500,96 +496,362 @@ window.onclick = function(event) {
     }
 }
 
-// CSV Export Function with proper peso formatting
-function exportTableToCSV(tableId, filename) {
-    const table = document.getElementById(tableId);
-    const rows = table.querySelectorAll('tr');
-    let csv = [];
+// Load XLSX library
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+document.head.appendChild(script);
+
+// Export to Excel Function
+function exportToExcel() {
+    // Wait for library to load
+    if (typeof XLSX === 'undefined') {
+        alert('Loading export library, please try again in a moment...');
+        return;
+    }
+    
+    const table = document.getElementById('transactionsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = tbody.querySelectorAll('tr');
+    
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    const data = [];
     
     // Add header row
-    csv.push([
-        'TRANSACTION CODE',
-        'DATE',
-        'TYPE',
-        'ITEM CODE',
-        'DESCRIPTION',
-        'CATEGORY',
-        'QUANTITY',
-        'UNIT COST',
-        'TOTAL COST',
-        'SUPPLIER/RECIPIENT',
-        'CREATED BY'
-    ].join(','));
+    data.push([
+        'Transaction Code',
+        'Date',
+        'Type',
+        'Item Code',
+        'Description',
+        'Category',
+        'Quantity',
+        'Unit Cost',
+        'Supplier/Recipient',
+        'Created By'
+    ]);
     
-    // Process data rows
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
+    // Add data rows
+    rows.forEach(row => {
         const cols = row.querySelectorAll('td');
-        
-        if (cols.length === 0) continue; // Skip empty rows
-        
-        let rowData = [];
-        
-        // Transaction Code
-        rowData.push('"' + (cols[1]?.textContent.trim() || '') + '"');
-        
-        // Date
-        rowData.push('"' + (cols[2]?.textContent.trim() || '') + '"');
-        
-        // Type
-        rowData.push('"' + (cols[3]?.textContent.trim() || '') + '"');
-        
-        // Item Code
-        rowData.push('"' + (cols[4]?.textContent.trim() || '') + '"');
-        
-        // Description
-        rowData.push('"' + (cols[5]?.textContent.trim() || '') + '"');
-        
-        // Category
-        rowData.push('"' + (cols[6]?.textContent.trim() || '') + '"');
-        
-        // Quantity (with + or -)
-        rowData.push('"' + (cols[7]?.textContent.trim() || '') + '"');
-        
-        // Unit Cost - Format with peso sign
-        const unitCost = cols[8]?.textContent.trim() || '₱0.00';
-        if (!unitCost.startsWith('₱')) {
-            rowData.push('"₱' + unitCost + '"');
-        } else {
-            rowData.push('"' + unitCost + '"');
+        if (cols.length > 0) {
+            const rowData = [];
+            
+            // Transaction Code (column 0)
+            rowData.push(cols[0]?.textContent.trim() || '');
+            
+            // Date (column 1)
+            rowData.push(cols[1]?.textContent.trim() || '');
+            
+            // Type (column 2 - extract from badge)
+            const typeCell = cols[2];
+            const typeBadge = typeCell?.querySelector('.badge');
+            const typeText = typeBadge?.textContent.trim() || cols[2]?.textContent.trim() || '';
+            rowData.push(typeText.replace(/\s+/g, ' '));
+            
+            // Item Code and Description (column 3 - combined)
+            const itemCell = cols[3];
+            const itemDivs = itemCell?.querySelectorAll('div');
+            const itemCode = itemDivs[0]?.textContent.trim() || '';
+            const itemDesc = itemDivs[1]?.textContent.trim() || '';
+            rowData.push(itemCode);
+            rowData.push(itemDesc);
+            
+            // Category (column 4)
+            const catCell = cols[4];
+            const catBadge = catCell?.querySelector('.badge');
+            rowData.push(catBadge?.textContent.trim() || cols[4]?.textContent.trim() || '');
+            
+            // Quantity (column 5)
+            rowData.push(cols[5]?.textContent.trim() || '');
+            
+            // Unit Cost (column 6)
+            const unitCost = cols[6]?.textContent.trim().replace('₱', '').replace(/,/g, '') || '0';
+            rowData.push(parseFloat(unitCost) || 0);
+            
+            // Supplier/Recipient (column 7)
+            const supplierText = cols[7]?.textContent.trim() || '';
+            rowData.push(supplierText.replace(/\s+/g, ' '));
+            
+            // Created By (column 8)
+            rowData.push(cols[8]?.textContent.trim() || '');
+            
+            data.push(rowData);
+        }
+    });
+    
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    
+    // Set column widths
+    ws['!cols'] = [
+        {wch: 15}, // Transaction Code
+        {wch: 12}, // Date
+        {wch: 12}, // Type
+        {wch: 12}, // Item Code
+        {wch: 40}, // Description
+        {wch: 15}, // Category
+        {wch: 12}, // Quantity
+        {wch: 12}, // Unit Cost
+        {wch: 25}, // Supplier/Recipient
+        {wch: 20}  // Created By
+    ];
+    
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
+    
+    // Generate filename
+    const filename = 'Transactions_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+    
+    // Save file
+    XLSX.writeFile(wb, filename);
+}
+
+// Professional Print Function
+function printTransactions() {
+    const printContent = generatePrintContent();
+    const printWindow = window.open('', '', 'width=900,height=700');
+    
+    printWindow.document.write('<html><head><title>Transaction Report</title>');
+    printWindow.document.write('<style>');
+    printWindow.document.write(`
+        @page {
+            size: A4 landscape;
+            margin: 0.5in;
         }
         
-        // Total Cost - Format with peso sign
-        const totalCost = cols[9]?.textContent.trim() || '₱0.00';
-        if (!totalCost.startsWith('₱')) {
-            rowData.push('"₱' + totalCost + '"');
-        } else {
-            rowData.push('"' + totalCost + '"');
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #000;
         }
         
-        // Supplier/Recipient
-        rowData.push('"' + (cols[10]?.textContent.trim() || '') + '"');
+        .print-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px double #000;
+            padding-bottom: 15px;
+        }
         
-        // Created By
-        rowData.push('"' + (cols[11]?.textContent.trim() || '') + '"');
+        .print-title {
+            font-size: 16pt;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
         
-        csv.push(rowData.join(','));
-    }
+        .print-subtitle {
+            font-size: 11pt;
+            margin-bottom: 2px;
+        }
+        
+        .print-doc-title {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .print-info {
+            font-size: 9pt;
+            color: #333;
+            margin-top: 5px;
+        }
+        
+        .print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 9pt;
+        }
+        
+        .print-table th,
+        .print-table td {
+            border: 1px solid #000;
+            padding: 6px 4px;
+            text-align: left;
+        }
+        
+        .print-table th {
+            background-color: #fff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 9pt;
+        }
+        
+        .print-table td {
+            vertical-align: top;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .print-footer {
+            margin-top: 30px;
+            page-break-inside: avoid;
+        }
+        
+        .print-signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .print-signature-box {
+            width: 30%;
+            text-align: center;
+        }
+        
+        .print-signature-line {
+            border-top: 1px solid #000;
+            margin-top: 35px;
+            padding-top: 5px;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        
+        .print-signature-title {
+            font-size: 9pt;
+            margin-top: 3px;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+            }
+        }
+    `);
+    printWindow.document.write('</style></head><body>');
+    printWindow.document.write(printContent);
+    printWindow.document.write('</body></html>');
     
-    // Create downloadable file
-    const csvContent = csv.join('\n');
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    printWindow.document.close();
+    printWindow.focus();
     
-    if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    setTimeout(() => {
+        printWindow.print();
+    }, 300);
+}
+
+function generatePrintContent() {
+    const table = document.getElementById('transactionsTable');
+    const tbody = table.querySelector('tbody');
+    const rows = tbody.querySelectorAll('tr');
+    
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    let html = `
+        <div class="print-header">
+            <div class="print-title">Republic of the Philippines</div>
+            <div class="print-subtitle">Province of Iloilo</div>
+            <div class="print-title">CITY OF PASSI</div>
+            <div class="print-subtitle">City Disaster Risk Reduction and Management Office</div>
+            <div class="print-doc-title">INVENTORY TRANSACTION REPORT</div>
+            <div class="print-info">As of ${dateStr}</div>
+        </div>
+        
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Transaction Code</th>
+                    <th style="width: 10%;">Date</th>
+                    <th style="width: 10%;">Type</th>
+                    <th style="width: 23%;">Item</th>
+                    <th style="width: 12%;">Category</th>
+                    <th style="width: 10%;">Quantity</th>
+                    <th style="width: 10%;">Unit Cost</th>
+                    <th style="width: 15%;">Supplier/Recipient</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    let totalAmount = 0;
+    let recordCount = 0;
+    
+    rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length > 0) {
+            recordCount++;
+            html += '<tr>';
+            
+            // Transaction Code
+            html += `<td class="text-center">${cols[0]?.textContent.trim() || ''}</td>`;
+            
+            // Date
+            html += `<td class="text-center">${cols[1]?.textContent.trim() || ''}</td>`;
+            
+            // Type
+            const typeCell = cols[2];
+            const typeBadge = typeCell?.querySelector('.badge');
+            const typeText = typeBadge?.textContent.trim() || cols[2]?.textContent.trim() || '';
+            html += `<td class="text-center">${typeText}</td>`;
+            
+            // Item (Code + Description)
+            const itemCell = cols[3];
+            const itemDivs = itemCell?.querySelectorAll('div');
+            const itemCode = itemDivs[0]?.textContent.trim() || '';
+            const itemDesc = itemDivs[1]?.textContent.trim() || '';
+            html += `<td><strong>${itemCode}</strong><br><small>${itemDesc}</small></td>`;
+            
+            // Category
+            const catCell = cols[4];
+            const catBadge = catCell?.querySelector('.badge');
+            html += `<td class="text-center">${catBadge?.textContent.trim() || cols[4]?.textContent.trim() || ''}</td>`;
+            
+            // Quantity
+            html += `<td class="text-center">${cols[5]?.textContent.trim() || ''}</td>`;
+            
+            // Unit Cost
+            html += `<td class="text-right">${cols[6]?.textContent.trim() || ''}</td>`;
+            
+            // Supplier/Recipient
+            const supplierText = cols[7]?.textContent.trim() || '';
+            html += `<td>${supplierText}</td>`;
+            
+            html += '</tr>';
+        }
+    });
+    
+    // Summary row
+    html += `
+                <tr style="font-weight: bold; background-color: #f9f9f9;">
+                    <td colspan="7" class="text-right">${recordCount} transaction(s)</td>
+                    <td class="text-center"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="print-footer">
+            <div class="print-signatures">
+                <div class="print-signature-box">
+                    <div class="print-signature-line">&nbsp;</div>
+                    <div class="print-signature-title">Prepared By</div>
+                </div>
+                <div class="print-signature-box">
+                    <div class="print-signature-line">&nbsp;</div>
+                    <div class="print-signature-title">Reviewed By</div>
+                </div>
+                <div class="print-signature-box">
+                    <div class="print-signature-line">&nbsp;</div>
+                    <div class="print-signature-title">Approved By</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return html;
 }
 
 function printCustodianSlip(transactionId) {

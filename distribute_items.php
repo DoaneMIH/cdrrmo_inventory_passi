@@ -202,8 +202,8 @@ require_once 'includes/header.php';
             </div>
             
             <div class="form-group">
-                <label class="form-label">Requisition and Issue Slip (RIS) No.</label>
-                <input type="text" name="reference_number" class="form-control" 
+                <label class="form-label">Requisition and Issue Slip (RIS) No. *</label>
+                <input type="text" name="reference_number" class="form-control" required
                     placeholder="Distribution slip or reference number">
             </div>
             

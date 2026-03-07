@@ -57,9 +57,9 @@ if (!isset($_SESSION['user_id'])) {
                 <a href="categories.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'categories.php' ? 'active' : ''; ?>">
                     <i class="fas fa-tags"></i> Categories
                 </a>
-                <a href="suppliers.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'suppliers.php' ? 'active' : ''; ?>">
+                <!-- <a href="suppliers.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'suppliers.php' ? 'active' : ''; ?>">
                     <i class="fas fa-truck"></i> Suppliers
-                </a>
+                </a> -->
                 <a href="locations.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'locations.php' ? 'active' : ''; ?>">
                     <i class="fas fa-warehouse"></i> Storage Locations
                 </a>
@@ -70,10 +70,10 @@ if (!isset($_SESSION['user_id'])) {
                 </a>
 
                 <div class="menu-divider">Support</div>
-                <a href="feedback.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'feedback.php' ? 'active' : ''; ?>">
+                <!-- <a href="feedback.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'feedback.php' ? 'active' : ''; ?>">
                     <i class="fas fa-comment-dots"></i> Send Feedback
                 </a>
-                
+                 -->
                 <?php if ($_SESSION['user_role'] === 'admin'): ?>
                     <a href="admin_feedback.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'admin_feedback.php' ? 'active' : ''; ?>">
                         <i class="fas fa-inbox"></i> Manage Feedback
@@ -89,6 +89,14 @@ if (!isset($_SESSION['user_id'])) {
                     <i class="fas fa-history"></i> Activity Logs
                 </a>
                 <?php endif; ?>
+
+                <!-- Settings -->
+                <?php if ($_SESSION['user_role'] === 'admin'): ?>
+                <a href="settings.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'settings.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                <?php endif; ?>
+                
                 
                 <div class="menu-divider">Account</div>
                 <a href="change_password.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'change_password.php' ? 'active' : ''; ?>">

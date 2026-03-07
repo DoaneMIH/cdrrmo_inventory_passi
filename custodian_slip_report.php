@@ -182,7 +182,7 @@ $period_display = $day
             body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
             .no-print { display: none !important; }
             .slip-container { padding: 0; }
-            .filter-panel { display: none; }
+            /* .filter-panel { display: none; } */
             /* .logo-left, .logo-right {
                 border-style: solid;
                 border-color: #000;
@@ -304,7 +304,7 @@ $period_display = $day
                         <th class="col-qty" rowspan="2">QUANTITY</th>
                         <th class="col-unit" rowspan="2">UNIT</th>
                         <th class="col-desc" rowspan="2">DESCRIPTION</th>
-                        <th class="col-date">DATE<br>BORROWED</th>
+                        <th class="col-date">DATE<br>ISSUED</th>
                         <th class="col-date">DATE<br>RETURNED</th>
                     </tr>
                 </thead>

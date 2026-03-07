@@ -128,7 +128,7 @@ require_once 'includes/header.php';
         </div>
     </div>
     
-    <div class="card">
+    <!-- <div class="card">
         <div style="padding: 25px;">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
                 <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
@@ -148,7 +148,7 @@ require_once 'includes/header.php';
                 <i class="fas fa-file-alt"></i> Generate Report
             </a>
         </div>
-    </div>
+    </div> -->
     
     <div class="card">
         <div style="padding: 25px;">

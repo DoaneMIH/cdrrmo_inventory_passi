@@ -159,12 +159,12 @@ require_once 'includes/header.php';
                     </div>
                 </div>
                 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label class="form-label">Unit Cost (₱) *</label>
                     <input type="number" name="unit_cost" class="form-control" step="0.01" min="0" required 
                         placeholder="0.00" onchange="calculateTotal()">
                 </div>
-                
+                 -->
                 <div class="form-group">
                     <label class="form-label">Total Cost (₱)</label>
                     <div style="background: var(--light-blue); padding: 12px 15px; border-radius: 6px; font-weight: 700; color: var(--primary-blue); font-size: 18px;">
@@ -179,7 +179,7 @@ require_once 'includes/header.php';
                     value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
             </div>
             
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label class="form-label">Supplier</label>
                 <select name="supplier_id" class="form-control">
                     <option value="">-- Select supplier (optional) --</option>
@@ -192,7 +192,7 @@ require_once 'includes/header.php';
                         </option>
                     <?php endwhile; ?>
                 </select>
-            </div>
+            </div> -->
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div class="form-group">

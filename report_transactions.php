@@ -98,13 +98,13 @@ require_once 'includes/header.php';
         </a>
     </div>
     <div style="display: flex; gap: 10px;">
-        <button onclick="window.print()" class="btn btn-primary">
-            <i class="fas fa-print"></i> Print Report
-        </button>
-        <button onclick="exportToCSV()" class="btn btn-success">
-            <i class="fas fa-file-csv"></i> Export CSV
-        </button>
-    </div>
+    <button onclick="printProfessionalReport('transactionsTable', 'TRANSACTION REPORT', 'Period: <?php echo date('M d, Y', strtotime($date_from)); ?> to <?php echo date('M d, Y', strtotime($date_to)); ?>')" class="btn btn-primary">
+        <i class="fas fa-print"></i> Print Report
+    </button>
+    <button onclick="exportReportToExcel('transactionsTable', 'TRANSACTION REPORT', 'Transaction_Report_<?php echo date('Y-m-d'); ?>.xlsx')" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Export Excel
+    </button>
+</div>
 </div>
 
 <!-- Filters -->
@@ -201,7 +201,7 @@ require_once 'includes/header.php';
                     <th style="padding: 10px; text-align: center; border: 1px solid #ddd;color: white;">Quantity</th>
                     <th style="padding: 10px; text-align: right; border: 1px solid #ddd;color: white;">Unit Cost</th>
                     <th style="padding: 10px; text-align: right; border: 1px solid #ddd;color: white;">Total</th>
-                    <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Supplier/Recipient</th>
+                    <!-- <th style="padding: 10px; text-align: left; border: 1px solid #ddd;color: white;">Supplier/Recipient</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -220,7 +220,7 @@ require_once 'includes/header.php';
                         </td>
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">₱<?php echo number_format($trans['unit_cost'], 2); ?></td>
                         <td style="padding: 8px; border: 1px solid #ddd; text-align: right; font-weight: 600;">₱<?php echo number_format($trans['total_cost'], 2); ?></td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">
+                        <!-- <td style="padding: 8px; border: 1px solid #ddd;">
                             <?php 
                             if ($trans['supplier_name']) {
                                 echo htmlspecialchars($trans['supplier_name']);
@@ -230,7 +230,7 @@ require_once 'includes/header.php';
                                 echo '-';
                             }
                             ?>
-                        </td>
+                        </td> -->
                     </tr>
                 <?php endforeach; ?>
                 
@@ -246,31 +246,5 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<script>
-function exportToCSV() {
-    const table = document.getElementById('transactionsTable');
-    let csv = [];
-    
-    csv.push('"PASSI CITY - DRRMO"');
-    csv.push('"TRANSACTION REPORT"');
-    csv.push('"Period: <?php echo date('M d, Y', strtotime($date_from)); ?> to <?php echo date('M d, Y', strtotime($date_to)); ?>"');
-    csv.push('');
-    
-    for (let row of table.rows) {
-        let rowData = [];
-        for (let cell of row.cells) {
-            rowData.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
-        }
-        csv.push(rowData.join(','));
-    }
-    
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'transactions_report_<?php echo date('Y-m-d'); ?>.csv';
-    a.click();
-}
-</script>
-
+<?php require_once 'includes/report_functions.php'; ?>
 <?php require_once 'includes/footer.php'; ?>

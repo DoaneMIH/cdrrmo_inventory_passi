@@ -2,7 +2,26 @@
 require_once 'includes/config.php';
 check_login();
 
-$page_title = 'Low Stock Alert';
+$page_title = 'Stock Alert';
+
+// Get filter parameter
+$status_filter = isset($_GET['status']) ? sanitize_input($_GET['status']) : 'all';
+
+// Build query based on filter
+$where_conditions = ["i.is_active = 1"];
+
+if ($status_filter === 'critical') {
+    // Critical: Out of stock only
+    $where_conditions[] = "i.items_on_hand = 0";
+} elseif ($status_filter === 'low') {
+    // Low stock: Above 0 but at or below minimum
+    $where_conditions[] = "i.items_on_hand > 0 AND i.items_on_hand <= i.minimum_stock_level";
+} else {
+    // All: Both critical and low stock
+    $where_conditions[] = "i.items_on_hand <= i.minimum_stock_level";
+}
+
+$where_clause = implode(' AND ', $where_conditions);
 
 // Get low stock items
 $low_stock = $conn->query("
@@ -15,8 +34,7 @@ $low_stock = $conn->query("
     FROM inventory_items i
     JOIN categories c ON i.category_id = c.id
     LEFT JOIN storage_locations sl ON i.storage_location_id = sl.id
-    WHERE i.items_on_hand <= i.minimum_stock_level
-    AND i.is_active = 1
+    WHERE $where_clause
     ORDER BY i.items_on_hand ASC, shortage DESC
 ");
 
@@ -36,6 +54,8 @@ while ($row = $temp_result->fetch_assoc()) {
 
 require_once 'includes/header.php';
 ?>
+
+
 
 <!-- Alert Summary Cards -->
 <div class="dashboard-cards" style="margin-bottom: 30px;">
@@ -80,17 +100,44 @@ require_once 'includes/header.php';
 </div>
 <?php endif; ?>
 
+<!-- Filter Panel -->
+<div class="card no-print" style="margin-bottom: 20px;">
+    <div style="padding: 20px;">
+        <h3 style="margin: 0 0 15px 0; color: var(--gray-800);"><i class="fas fa-filter"></i> Filter Stock Status</h3>
+        <form method="GET" style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+            <div>
+                <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 600;">Status</label>
+                <select name="status" class="form-control" style="width: 250px; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 5px;">
+                    <option value="all" <?php echo $status_filter === 'all' ? 'selected' : ''; ?>>All (Critical & Low Stock)</option>
+                    <option value="critical" <?php echo $status_filter === 'critical' ? 'selected' : ''; ?>>Critical Only (Out of Stock)</option>
+                    <option value="low" <?php echo $status_filter === 'low' ? 'selected' : ''; ?>>Low Stock Only</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Apply Filter
+            </button>
+            
+            <?php if ($status_filter !== 'all'): ?>
+                <a href="low_stock.php" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Clear Filter
+                </a>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+
 <div class="table-container">
     <div class="table-header">
-        <h3 class="table-title">Low Stock Items</h3>
+        <h3 class="table-title">Stock Alert</h3>
         <div style="display: flex; gap: 10px;">
-            <button class="btn btn-sm btn-primary" onclick="printTable('lowStockTable')">
-                <i class="fas fa-print"></i> Print
-            </button>
-            <button class="btn btn-sm btn-success" onclick="exportTableToCSV('lowStockTable', 'low_stock_items.csv')">
-                <i class="fas fa-download"></i> Export
-            </button>
-        </div>
+    <button onclick="printProfessionalReport('lowStockTable', 'LOW STOCK ALERT REPORT', '')" class="btn btn-primary">
+        <i class="fas fa-print"></i> Print Report
+    </button>
+    <button onclick="exportReportToExcel('lowStockTable', 'LOW STOCK ALERT REPORT', 'Low_Stock_Report_<?php echo date('Y-m-d'); ?>.xlsx')" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Export Excel
+    </button>
+</div>
     </div>
     <div class="table-responsive">
         <table id="lowStockTable">
@@ -220,4 +267,5 @@ require_once 'includes/header.php';
 </div>
 <?php endif; ?>
 
+<?php require_once 'includes/report_functions.php'; ?>
 <?php require_once 'includes/footer.php'; ?>

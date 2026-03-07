@@ -78,6 +78,18 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
         .btn-secondary { background: #6b7280; color: white; }
         .btn-success { background: #059669; color: white; }
         
+        /* Logo Header */
+        .logo-header { text-align: center; margin-bottom: 10px; }
+        .header-row { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; gap: 10px; }
+        .logo-left, .logo-right { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: contain;
+        }
+        .header-text { padding: 0 15px; text-align: center; }
+        .header-title { font-size: 11pt; font-weight: bold; margin-bottom: 2px; }
+        .header-subtitle { font-size: 10pt; margin-bottom: 2px; }
+        
         .report-header { text-align: center; margin-bottom: 15px; }
         .report-title { font-size: 12pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
         .report-period { font-size: 10pt; margin-bottom: 15px; }
@@ -201,6 +213,19 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
                     </a>
                 </div>
             </form>
+        </div>
+
+        <!-- Logo Header -->
+        <div class="logo-header">
+            <div class="header-row">
+                <img src="images/logo.jpg" class="logo-left" alt="Logo">
+                <div class="header-text">
+                    <div class="header-title">Republic of the Philippines</div>
+                    <div class="header-subtitle">Province of Iloilo</div>
+                    <div class="header-title">CITY OF PASSI</div>
+                </div>
+                <img src="images/logo1.png" class="logo-right" alt="Logo">
+            </div>
         </div>
 
         <div class="report-header">
