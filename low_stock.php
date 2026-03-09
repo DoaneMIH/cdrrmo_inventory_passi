@@ -202,7 +202,7 @@ require_once 'includes/header.php';
                             </td>
                             <td>₱<?php echo number_format($row['unit_cost'], 2); ?></td>
                             <td>
-                                <strong style="color: var(--primary-blue);">
+                                <strong style="color: var(--primary);">
                                     ₱<?php echo number_format($restock_cost, 2); ?>
                                 </strong>
                             </td>
@@ -230,7 +230,7 @@ require_once 'includes/header.php';
                                 $total_cost += $row['shortage'] * $row['unit_cost'];
                             }
                             ?>
-                            <strong style="color: var(--primary-blue); font-size: 16px;">
+                            <strong style="color: var(--primary); font-size: 16px;">
                                 ₱<?php echo number_format($total_cost, 2); ?>
                             </strong>
                         </td>
@@ -253,8 +253,8 @@ require_once 'includes/header.php';
 </div>
 
 <?php if ($total_low_stock > 0): ?>
-<div style="margin-top: 30px; padding: 20px; background: var(--light-blue); border-radius: 8px; border-left: 4px solid var(--secondary-blue);">
-    <h4 style="margin: 0 0 10px 0; color: var(--primary-blue);">
+<div style="margin-top: 30px; padding: 20px; background: var(--primary-50); border-radius: 8px; border-left: 4px solid var(--primary-light);">
+    <h4 style="margin: 0 0 10px 0; color: var(--primary);">
         <i class="fas fa-lightbulb"></i> Recommendations
     </h4>
     <ul style="margin: 0; padding-left: 20px; color: var(--gray-700);">

@@ -70,12 +70,12 @@ require_once 'includes/header.php';
 .form-header {
     text-align: center;
     margin-bottom: 30px;
-    border-bottom: 3px solid var(--primary-blue);
+    border-bottom: 3px solid var(--primary);
     padding-bottom: 20px;
 }
 .form-header h1 {
     margin: 0;
-    color: var(--primary-blue);
+    color: var(--primary);
     font-size: 28px;
     font-weight: 700;
 }
@@ -98,7 +98,7 @@ require_once 'includes/header.php';
     margin: 20px 0;
 }
 .inventory-table th {
-    background: var(--primary-blue);
+    background: var(--primary);
     color: white;
     padding: 12px;
     text-align: center;
@@ -156,9 +156,9 @@ require_once 'includes/header.php';
             <h3>INVENTORY OF SUPPLIES (<?php echo htmlspecialchars($item['category_name']); ?>)</h3>
         </div>
         
-        <div style="background: var(--light-blue); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+        <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
             <div style="font-size: 14px; color: var(--gray-600); margin-bottom: 5px;">ITEM CODE</div>
-            <div style="font-size: 32px; font-weight: 700; color: var(--primary-blue);">
+            <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                 <?php echo htmlspecialchars($item['item_code']); ?>
             </div>
         </div>
@@ -230,7 +230,7 @@ require_once 'includes/header.php';
                 </div>
                 <div>
                     <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 5px;">Total Value</div>
-                    <div style="font-weight: 600; color: var(--primary-blue); font-size: 15px;">
+                    <div style="font-weight: 600; color: var(--primary); font-size: 15px;">
                         ₱<?php echo number_format(($item['items_on_hand'] ?? 0) * ($item['unit_cost'] ?? 0), 2); ?>
                     </div>
                 </div>
@@ -244,7 +244,7 @@ require_once 'includes/header.php';
                     <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 5px;">Storage Location</div>
                     <div style="font-weight: 600; color: var(--gray-800); font-size: 15px;">
                         <?php if ($item['location_name']): ?>
-                            <i class="fas fa-warehouse" style="color: var(--primary-blue); margin-right: 5px;"></i>
+                            <i class="fas fa-warehouse" style="color: var(--primary); margin-right: 5px;"></i>
                             <?php echo htmlspecialchars($item['location_name']); ?>
                         <?php else: ?>
                             <span style="color: var(--gray-400);">Not assigned</span>

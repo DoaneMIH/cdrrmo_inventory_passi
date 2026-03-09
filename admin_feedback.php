@@ -87,7 +87,7 @@ require_once 'includes/header.php';
 
 <div class="card" style="margin-bottom: 20px;">
     <div style="padding: 20px;">
-        <h2 style="margin-bottom: 15px; color: var(--primary-blue);">
+        <h2 style="margin-bottom: 15px; color: var(--primary);">
             <i class="fas fa-comment-dots"></i> User Feedback Management
         </h2>
         
@@ -182,8 +182,8 @@ require_once 'includes/header.php';
                     </div>
                     
                     <?php if ($feedback['admin_response']): ?>
-                        <div style="background: #dbeafe; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid var(--primary-blue);">
-                            <div style="font-weight: 600; color: var(--primary-blue); font-size: 12px; margin-bottom: 8px;">
+                        <div style="background: #dbeafe; padding: 15px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid var(--primary);">
+                            <div style="font-weight: 600; color: var(--primary); font-size: 12px; margin-bottom: 8px;">
                                 <i class="fas fa-reply"></i> Response by <?php echo htmlspecialchars($feedback['responded_by_name'] ?? 'Admin'); ?>
                                 <?php if ($feedback['responded_at']): ?>
                                     • <?php echo date('M d, Y', strtotime($feedback['responded_at'])); ?>

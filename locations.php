@@ -179,7 +179,7 @@ require_once 'includes/header.php';
                         <tr>
                             <td><strong><?php echo htmlspecialchars($location['location_code'] ?? '-'); ?></strong></td>
                             <td>
-                                <i class="fas fa-warehouse" style="color: var(--secondary-blue);"></i>
+                                <i class="fas fa-warehouse" style="color: var(--primary-light);"></i>
                                 <?php echo htmlspecialchars($location['location_name']); ?>
                             </td>
                             <td><?php echo htmlspecialchars(substr($location['description'] ?? '-', 0, 50)) . (strlen($location['description'] ?? '') > 50 ? '...' : ''); ?></td>

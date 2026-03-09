@@ -187,7 +187,7 @@ require_once 'includes/header.php';
 
 <div class="card">
     <div style="padding: 30px;">
-        <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+        <h2 style="margin-bottom: 20px; color: var(--primary);">
             <i class="fas fa-undo-alt"></i> Return Borrowed Items
         </h2>
         
@@ -234,7 +234,7 @@ require_once 'includes/header.php';
         <div style="margin-bottom: 30px;">
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
-                    <tr style="background: var(--primary-blue); color: white;">
+                    <tr style="background: var(--primary); color: white;">
                         <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Transaction Code</th>
                         <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Item</th>
                         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Borrower</th>
@@ -301,7 +301,7 @@ require_once 'includes/header.php';
                                 <?php if ($search): ?>
                                     <i class="fas fa-search" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
                                     <p style="margin: 0;">No borrowed items found matching "<?php echo htmlspecialchars($search); ?>"</p>
-                                    <a href="return_items.php" style="color: var(--primary-blue); margin-top: 10px; display: inline-block;">Clear search</a>
+                                    <a href="return_items.php" style="color: var(--primary); margin-top: 10px; display: inline-block;">Clear search</a>
                                 <?php else: ?>
                                     <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
                                     <p style="margin: 0;">No borrowed items pending return</p>

@@ -43,192 +43,26 @@ require_once 'includes/header.php';
 ?>
 
 <style>
-    .settings-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .settings-card {
-        background: white;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        border: 1px solid var(--gray-200);
-    }
-    
-    .settings-card h3 {
-        color: var(--primary-blue);
-        margin: 0 0 20px 0;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid var(--light-blue);
-    }
-    
-    .settings-card h3 i {
-        font-size: 22px;
-    }
-    
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--gray-100);
-    }
-    
-    .info-row:last-child {
-        border-bottom: none;
-    }
-    
-    .info-label {
-        color: var(--gray-600);
-        font-size: 14px;
-        font-weight: 500;
-    }
-    
-    .info-value {
-        color: var(--gray-800);
-        font-size: 14px;
-        font-weight: 600;
-    }
-    
-    .version-badge {
-        display: inline-block;
-        background: var(--primary-blue);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 18px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-    }
-    
-    .stat-card {
-        background: linear-gradient(135deg, var(--light-blue) 0%, white 100%);
-        padding: 20px;
+    /* Settings page - only unique overrides needed beyond global style.css */
+    .settings-card .stat-card {
+        background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+        padding: 18px;
         border-radius: 10px;
-        border-left: 4px solid var(--primary-blue);
-        margin-bottom: 15px;
+        border-left: 4px solid var(--primary);
+        margin-bottom: 12px;
+        display: block;
     }
-    
-    .stat-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--primary-blue);
-        margin: 5px 0;
+    .settings-card .stat-value {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--primary);
+        margin: 4px 0;
     }
-    
-    .stat-label {
-        color: var(--gray-600);
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .feature-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .feature-list li {
-        padding: 10px 0;
-        display: flex;
-        align-items: flex-start;
-        gap: 10px;
-        border-bottom: 1px solid var(--gray-100);
-    }
-    
-    .feature-list li:last-child {
-        border-bottom: none;
-    }
-    
-    .feature-list i {
-        color: var(--success);
-        font-size: 16px;
-        margin-top: 2px;
-    }
-    
-    .tech-stack {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 12px;
-        margin-top: 15px;
-    }
-    
-    .tech-item {
-        background: var(--gray-50);
-        padding: 12px;
-        border-radius: 8px;
-        text-align: center;
-        border: 1px solid var(--gray-200);
-        transition: all 0.3s;
-    }
-    
-    .tech-item:hover {
-        background: var(--light-blue);
-        border-color: var(--primary-blue);
-        transform: translateY(-2px);
-    }
-    
-    .tech-item i {
-        font-size: 24px;
-        color: var(--primary-blue);
-        margin-bottom: 8px;
-    }
-    
-    .tech-name {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--gray-700);
-    }
-    
-    .tech-version {
-        font-size: 10px;
+    .settings-card .stat-label {
         color: var(--gray-500);
-    }
-    
-    .changelog {
-        background: var(--gray-50);
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid var(--secondary-blue);
-        margin-bottom: 15px;
-    }
-    
-    .changelog-date {
-        font-weight: 700;
-        color: var(--primary-blue);
-        margin-bottom: 8px;
-    }
-    
-    .changelog ul {
-        margin: 0;
-        padding-left: 20px;
-    }
-    
-    .changelog li {
-        margin: 5px 0;
-        color: var(--gray-700);
-        font-size: 13px;
-    }
-    
-    .alert-info {
-        background: var(--light-blue);
-        border-left: 4px solid var(--secondary-blue);
-        padding: 15px 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .alert-info i {
-        color: var(--secondary-blue);
-        margin-right: 10px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
     }
 </style>
 
@@ -295,7 +129,7 @@ require_once 'includes/header.php';
         
         <div class="info-row">
             <span class="info-label">Total Inventory Value</span>
-            <span class="info-value" style="color: var(--primary-blue);">
+            <span class="info-value" style="color: var(--primary);">
                 ₱<?php echo number_format($inventory_value, 2); ?>
             </span>
         </div>
@@ -449,7 +283,7 @@ require_once 'includes/header.php';
     <h3><i class="fas fa-layer-group"></i> System Modules</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-boxes"></i> Inventory Management
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -458,7 +292,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-arrow-down"></i> Receive Items
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -467,7 +301,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-arrow-up"></i> Distribute Items
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -476,7 +310,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-undo"></i> Return Items
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -485,7 +319,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-exchange-alt"></i> Transactions
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -494,7 +328,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-tags"></i> Categories
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -503,7 +337,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-exclamation-triangle"></i> Stock Alert
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -512,7 +346,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-file-alt"></i> Reports
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -521,7 +355,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-users"></i> User Management
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -530,7 +364,7 @@ require_once 'includes/header.php';
         </div>
         
         <div style="padding: 15px; background: var(--gray-50); border-radius: 8px;">
-            <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 5px;">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 5px;">
                 <i class="fas fa-comments"></i> Feedback System
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
@@ -544,56 +378,56 @@ require_once 'includes/header.php';
 <div class="settings-card" style="margin-top: 20px;">
     <h3><i class="fas fa-chart-bar"></i> Available Reports</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>1. Inventory Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Complete list of all items with stock levels and values
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>2. Transaction Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 All receive and distribute transactions with details
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>3. Category Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Inventory summary grouped by category
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>4. Valuation Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Item valuations with percentage breakdown
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>5. Supplier Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Supplier transactions and total values
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>6. Stock Alert Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Low stock items with restock cost estimates
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>7. Supplies & Materials Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Government-format issued/received items report
             </div>
         </div>
         
-        <div style="padding: 12px; border-left: 3px solid var(--primary-blue); background: var(--gray-50);">
+        <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>8. Custodian Slip Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
                 Borrowed items with date issued and returned
@@ -654,8 +488,8 @@ require_once 'includes/header.php';
 <!-- Support Information -->
 <div class="settings-card" style="margin-top: 20px;">
     <h3><i class="fas fa-question-circle"></i> Support & Documentation</h3>
-    <div style="padding: 15px; background: var(--light-blue); border-radius: 8px; margin-bottom: 15px;">
-        <div style="font-weight: 600; color: var(--primary-blue); margin-bottom: 10px;">
+    <div style="padding: 15px; background: var(--primary-50); border-radius: 8px; margin-bottom: 15px;">
+        <div style="font-weight: 600; color: var(--primary); margin-bottom: 10px;">
             <i class="fas fa-book"></i> Need Help?
         </div>
         <div style="font-size: 14px; color: var(--gray-700); line-height: 1.8;">

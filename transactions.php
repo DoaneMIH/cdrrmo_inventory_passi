@@ -295,7 +295,7 @@ require_once 'includes/header.php';
                     <?php while ($row = $transactions->fetch_assoc()): ?>
                         <tr>
                             <td>
-                                <strong style="color: var(--primary-blue);">
+                                <strong style="color: var(--primary);">
                                     <?php echo htmlspecialchars($row['transaction_code']); ?>
                                 </strong>
                             </td>

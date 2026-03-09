@@ -1,0 +1,213 @@
+/* 
+ * CDRRMO Reports - Table Alignment Fix
+ * Add this CSS to all report files
+ */
+
+/* Ensure proper table alignment for all reports */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* This is KEY for consistent column widths */
+}
+
+/* Header cells - proper alignment */
+table th {
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #000;
+    font-weight: bold;
+    vertical-align: middle;
+    word-wrap: break-word;
+}
+
+/* Body cells - proper alignment based on content */
+table td {
+    padding: 8px;
+    border: 1px solid #000;
+    vertical-align: middle;
+    word-wrap: break-word;
+}
+
+/* Text columns - left align */
+table td:first-child,
+table td.text-left {
+    text-align: left;
+}
+
+/* Number columns - right align */
+table td.text-right,
+table td[style*="text-align: right"] {
+    text-align: right !important;
+    padding-right: 12px;
+}
+
+/* Center columns - center align */
+table td.text-center,
+table td[style*="text-align: center"] {
+    text-align: center !important;
+}
+
+/* Category Report Specific */
+#categoryTable th:nth-child(1) { width: 20%; text-align: left; }    /* Category */
+#categoryTable th:nth-child(2) { width: 10%; text-align: center; }  /* Code */
+#categoryTable th:nth-child(3) { width: 12%; text-align: center; }  /* Item Count */
+#categoryTable th:nth-child(4) { width: 12%; text-align: center; }  /* On Hand */
+#categoryTable th:nth-child(5) { width: 12%; text-align: center; }  /* Received */
+#categoryTable th:nth-child(6) { width: 12%; text-align: center; }  /* Distributed */
+#categoryTable th:nth-child(7) { width: 14%; text-align: right; }   /* Total Value */
+#categoryTable th:nth-child(8) { width: 8%; text-align: center; }   /* Low Stock */
+
+#categoryTable td:nth-child(1) { text-align: left; }     /* Category */
+#categoryTable td:nth-child(2) { text-align: center; }   /* Code */
+#categoryTable td:nth-child(3) { text-align: center; }   /* Item Count */
+#categoryTable td:nth-child(4) { text-align: center; }   /* On Hand */
+#categoryTable td:nth-child(5) { text-align: center; }   /* Received */
+#categoryTable td:nth-child(6) { text-align: center; }   /* Distributed */
+#categoryTable td:nth-child(7) { text-align: right; padding-right: 12px; }  /* Total Value */
+#categoryTable td:nth-child(8) { text-align: center; }   /* Low Stock */
+
+/* Valuation Report Specific */
+#valuationTable th:nth-child(1) { width: 12%; text-align: left; }   /* Item Code */
+#valuationTable th:nth-child(2) { width: 30%; text-align: left; }   /* Description */
+#valuationTable th:nth-child(3) { width: 15%; text-align: center; } /* Category */
+#valuationTable th:nth-child(4) { width: 10%; text-align: center; } /* On Hand */
+#valuationTable th:nth-child(5) { width: 12%; text-align: right; }  /* Unit Cost */
+#valuationTable th:nth-child(6) { width: 13%; text-align: right; }  /* Current Value */
+#valuationTable th:nth-child(7) { width: 8%; text-align: right; }   /* % of Total */
+
+#valuationTable td:nth-child(1) { text-align: left; }    /* Item Code */
+#valuationTable td:nth-child(2) { text-align: left; }    /* Description */
+#valuationTable td:nth-child(3) { text-align: center; }  /* Category */
+#valuationTable td:nth-child(4) { text-align: center; }  /* On Hand */
+#valuationTable td:nth-child(5) { text-align: right; padding-right: 12px; }  /* Unit Cost */
+#valuationTable td:nth-child(6) { text-align: right; padding-right: 12px; }  /* Current Value */
+#valuationTable td:nth-child(7) { text-align: right; padding-right: 12px; }  /* % of Total */
+
+/* Inventory Report Specific */
+#inventoryTable th:nth-child(1) { width: 10%; text-align: left; }   /* Item Code */
+#inventoryTable th:nth-child(2) { width: 25%; text-align: left; }   /* Description */
+#inventoryTable th:nth-child(3) { width: 12%; text-align: center; } /* Category */
+#inventoryTable th:nth-child(4) { width: 10%; text-align: center; } /* On Hand */
+#inventoryTable th:nth-child(5) { width: 8%; text-align: center; }  /* Unit */
+#inventoryTable th:nth-child(6) { width: 12%; text-align: right; }  /* Unit Cost */
+#inventoryTable th:nth-child(7) { width: 13%; text-align: right; }  /* Total Value */
+#inventoryTable th:nth-child(8) { width: 10%; text-align: center; } /* Status */
+
+#inventoryTable td:nth-child(1) { text-align: left; }    /* Item Code */
+#inventoryTable td:nth-child(2) { text-align: left; }    /* Description */
+#inventoryTable td:nth-child(3) { text-align: center; }  /* Category */
+#inventoryTable td:nth-child(4) { text-align: center; }  /* On Hand */
+#inventoryTable td:nth-child(5) { text-align: center; }  /* Unit */
+#inventoryTable td:nth-child(6) { text-align: right; padding-right: 12px; }  /* Unit Cost */
+#inventoryTable td:nth-child(7) { text-align: right; padding-right: 12px; }  /* Total Value */
+#inventoryTable td:nth-child(8) { text-align: center; }  /* Status */
+
+/* Transaction Report Specific */
+#transactionsTable th:nth-child(1) { width: 10%; text-align: left; }   /* Date */
+#transactionsTable th:nth-child(2) { width: 12%; text-align: left; }   /* Transaction Code */
+#transactionsTable th:nth-child(3) { width: 10%; text-align: left; }   /* Item Code */
+#transactionsTable th:nth-child(4) { width: 20%; text-align: left; }   /* Description */
+#transactionsTable th:nth-child(5) { width: 10%; text-align: center; } /* Type */
+#transactionsTable th:nth-child(6) { width: 10%; text-align: center; } /* Quantity */
+#transactionsTable th:nth-child(7) { width: 10%; text-align: right; }  /* Unit Cost */
+#transactionsTable th:nth-child(8) { width: 10%; text-align: right; }  /* Total */
+#transactionsTable th:nth-child(9) { width: 18%; text-align: left; }   /* Supplier/Recipient */
+
+#transactionsTable td:nth-child(1) { text-align: left; }    /* Date */
+#transactionsTable td:nth-child(2) { text-align: left; }    /* Transaction Code */
+#transactionsTable td:nth-child(3) { text-align: left; }    /* Item Code */
+#transactionsTable td:nth-child(4) { text-align: left; }    /* Description */
+#transactionsTable td:nth-child(5) { text-align: center; }  /* Type */
+#transactionsTable td:nth-child(6) { text-align: center; }  /* Quantity */
+#transactionsTable td:nth-child(7) { text-align: right; padding-right: 12px; }  /* Unit Cost */
+#transactionsTable td:nth-child(8) { text-align: right; padding-right: 12px; }  /* Total */
+#transactionsTable td:nth-child(9) { text-align: left; }    /* Supplier/Recipient */
+
+/* Supplier Report Specific */
+#supplierTable th:nth-child(1) { width: 20%; text-align: left; }   /* Supplier Name */
+#supplierTable th:nth-child(2) { width: 15%; text-align: left; }   /* Contact Person */
+#supplierTable th:nth-child(3) { width: 12%; text-align: left; }   /* Phone */
+#supplierTable th:nth-child(4) { width: 10%; text-align: center; } /* Transactions */
+#supplierTable th:nth-child(5) { width: 12%; text-align: center; } /* Items Received */
+#supplierTable th:nth-child(6) { width: 15%; text-align: right; }  /* Total Value */
+#supplierTable th:nth-child(7) { width: 16%; text-align: left; }   /* Last Transaction */
+
+#supplierTable td:nth-child(1) { text-align: left; }    /* Supplier Name */
+#supplierTable td:nth-child(2) { text-align: left; }    /* Contact Person */
+#supplierTable td:nth-child(3) { text-align: left; }    /* Phone */
+#supplierTable td:nth-child(4) { text-align: center; }  /* Transactions */
+#supplierTable td:nth-child(5) { text-align: center; }  /* Items Received */
+#supplierTable td:nth-child(6) { text-align: right; padding-right: 12px; }  /* Total Value */
+#supplierTable td:nth-child(7) { text-align: left; }    /* Last Transaction */
+
+/* Low Stock Report Specific */
+#lowStockTable th:nth-child(1) { width: 8%; text-align: center; }   /* Priority */
+#lowStockTable th:nth-child(2) { width: 10%; text-align: left; }    /* Item Code */
+#lowStockTable th:nth-child(3) { width: 20%; text-align: left; }    /* Description */
+#lowStockTable th:nth-child(4) { width: 10%; text-align: center; }  /* Category */
+#lowStockTable th:nth-child(5) { width: 10%; text-align: center; }  /* Location */
+#lowStockTable th:nth-child(6) { width: 8%; text-align: center; }   /* On Hand */
+#lowStockTable th:nth-child(7) { width: 8%; text-align: center; }   /* Min Level */
+#lowStockTable th:nth-child(8) { width: 8%; text-align: center; }   /* Shortage */
+#lowStockTable th:nth-child(9) { width: 10%; text-align: right; }   /* Unit Cost */
+#lowStockTable th:nth-child(10) { width: 12%; text-align: right; }  /* Restock Cost */
+#lowStockTable th:nth-child(11) { width: 8%; text-align: center; }  /* Status */
+#lowStockTable th:nth-child(12) { width: 8%; text-align: center; }  /* Action */
+
+#lowStockTable td:nth-child(1) { text-align: center; }  /* Priority */
+#lowStockTable td:nth-child(2) { text-align: left; }    /* Item Code */
+#lowStockTable td:nth-child(3) { text-align: left; }    /* Description */
+#lowStockTable td:nth-child(4) { text-align: center; }  /* Category */
+#lowStockTable td:nth-child(5) { text-align: center; }  /* Location */
+#lowStockTable td:nth-child(6) { text-align: center; }  /* On Hand */
+#lowStockTable td:nth-child(7) { text-align: center; }  /* Min Level */
+#lowStockTable td:nth-child(8) { text-align: center; }  /* Shortage */
+#lowStockTable td:nth-child(9) { text-align: right; padding-right: 12px; }   /* Unit Cost */
+#lowStockTable td:nth-child(10) { text-align: right; padding-right: 12px; }  /* Restock Cost */
+#lowStockTable td:nth-child(11) { text-align: center; } /* Status */
+#lowStockTable td:nth-child(12) { text-align: center; } /* Action */
+
+/* Print-specific alignment */
+@media print {
+    table {
+        table-layout: fixed;
+    }
+    
+    table th,
+    table td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Ensure number columns stay right-aligned in print */
+    table td[style*="text-align: right"],
+    table td.text-right {
+        text-align: right !important;
+    }
+    
+    /* Ensure center columns stay centered in print */
+    table td[style*="text-align: center"],
+    table td.text-center {
+        text-align: center !important;
+    }
+}
+
+/* Totals row specific styling */
+table tr[style*="font-weight: 700"] td,
+table tr[style*="font-weight: bold"] td,
+table tbody tr:last-child td {
+    font-weight: bold;
+}
+
+/* Ensure currency values are right-aligned */
+table td:contains("₱"),
+table td[data-type="currency"] {
+    text-align: right;
+    padding-right: 12px;
+}
+
+/* Ensure numeric values are right-aligned */
+table td[data-type="number"] {
+    text-align: right;
+    padding-right: 12px;
+}

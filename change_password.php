@@ -54,7 +54,7 @@ require_once 'includes/header.php';
 <div style="max-width: 600px; margin: 0 auto;">
     <div class="card">
         <div style="padding: 30px;">
-            <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">
                 <i class="fas fa-key"></i> Change Password
             </h2>
             

@@ -103,7 +103,7 @@ require_once 'includes/header.php';
 
 <div class="card" style="max-width: 800px; margin: 0 auto;">
     <div style="padding: 30px;">
-        <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+        <h2 style="margin-bottom: 20px; color: var(--primary);">
             <i class="fas fa-minus-circle"></i> Distribute Items
         </h2>
         
@@ -177,8 +177,8 @@ require_once 'includes/header.php';
                     value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
             </div>
             
-            <div style="background: var(--light-blue); padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary-blue); margin: 20px 0;">
-                <h3 style="margin: 0 0 15px 0; color: var(--primary-blue); font-size: 16px;">
+            <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary-light); margin: 20px 0;">
+                <h3 style="margin: 0 0 15px 0; color: var(--primary); font-size: 16px;">
                     <i class="fas fa-user"></i> Recipient Information
                 </h3>
                 
@@ -210,7 +210,7 @@ require_once 'includes/header.php';
             <div class="form-group">
                 <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                     <input type="checkbox" name="is_borrowed" id="is_borrowed" value="1" style="width: 18px; height: 18px;">
-                    <span style="font-weight: 600; color: var(--primary-blue);">
+                    <span style="font-weight: 600; color: var(--primary);">
                         <i class="fas fa-exchange-alt"></i> This is a borrowed item (will be returned later)
                     </span>
                 </label>

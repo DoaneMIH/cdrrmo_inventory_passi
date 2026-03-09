@@ -8,7 +8,7 @@ require_once 'includes/header.php';
 ?>
 
 <!-- <div style="margin-bottom: 30px;">
-    <h2 style="color: var(--primary-blue); margin-bottom: 10px;">
+    <h2 style="color: var(--primary); margin-bottom: 10px;">
         <i class="fas fa-chart-bar"></i> Inventory Reports
     </h2>
     <p style="color: var(--gray-600);">
@@ -21,7 +21,7 @@ require_once 'includes/header.php';
     <div class="card">
         <div style="padding: 25px;">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue)); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
                     <i class="fas fa-boxes"></i>
                 </div>
                 <div>
@@ -87,7 +87,7 @@ require_once 'includes/header.php';
     <div class="card">
         <div style="padding: 25px;">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-yellow), #f59e0b); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--gold), #f59e0b); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
                     <i class="fas fa-tags"></i>
                 </div>
                 <div>
@@ -100,7 +100,7 @@ require_once 'includes/header.php';
             <p style="color: var(--gray-600); font-size: 14px; margin-bottom: 15px;">
                 View inventory breakdown by categories with stock and value totals.
             </p>
-            <a href="report_categories.php" class="btn btn-primary btn-block" style="background: var(--primary-yellow); border-color: var(--primary-yellow);">
+            <a href="report_categories.php" class="btn btn-primary btn-block" style="background: var(--gold); border-color: var(--gold);">
                 <i class="fas fa-file-alt"></i> Generate Report
             </a>
         </div>
@@ -228,9 +228,9 @@ $trans_data = $trans_stats->fetch_assoc();
         </h3>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-            <div style="background: var(--light-blue); padding: 20px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 14px; color: var(--primary-blue); margin-bottom: 5px;">Total Items</div>
-                <div style="font-size: 32px; font-weight: 700; color: var(--primary-blue);">
+            <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 14px; color: var(--primary); margin-bottom: 5px;">Total Items</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                     <?php echo number_format($quick_stats['total_items']); ?>
                 </div>
             </div>
@@ -277,9 +277,9 @@ $trans_data = $trans_stats->fetch_assoc();
                 </div>
             </div>
             
-            <div style="background: var(--light-blue); padding: 20px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 14px; color: var(--primary-blue); margin-bottom: 5px;">Transaction Value (YTD)</div>
-                <div style="font-size: 32px; font-weight: 700; color: var(--primary-blue);">
+            <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 14px; color: var(--primary); margin-bottom: 5px;">Transaction Value (YTD)</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                     ₱<?php echo number_format($trans_data['total_value'], 2); ?>
                 </div>
             </div>

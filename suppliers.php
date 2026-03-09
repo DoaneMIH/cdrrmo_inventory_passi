@@ -187,7 +187,7 @@ require_once 'includes/header.php';
                             <td><?php echo htmlspecialchars($supplier['contact_person'] ?? '-'); ?></td>
                             <td>
                                 <?php if ($supplier['phone']): ?>
-                                    <a href="tel:<?php echo $supplier['phone']; ?>" style="color: var(--secondary-blue);">
+                                    <a href="tel:<?php echo $supplier['phone']; ?>" style="color: var(--primary-light);">
                                         <i class="fas fa-phone"></i> <?php echo htmlspecialchars($supplier['phone']); ?>
                                     </a>
                                 <?php else: ?>
@@ -196,7 +196,7 @@ require_once 'includes/header.php';
                             </td>
                             <td>
                                 <?php if ($supplier['email']): ?>
-                                    <a href="mailto:<?php echo $supplier['email']; ?>" style="color: var(--secondary-blue);">
+                                    <a href="mailto:<?php echo $supplier['email']; ?>" style="color: var(--primary-light);">
                                         <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($supplier['email']); ?>
                                     </a>
                                 <?php else: ?>

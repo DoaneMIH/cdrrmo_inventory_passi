@@ -394,9 +394,9 @@ require_once 'includes/header.php';
             <button class="modal-close" onclick="hideViewPasswordModal()">&times;</button>
         </div>
         <div class="modal-body">
-            <div style="background: var(--light-blue); padding: 20px; border-radius: 8px; text-align: center;">
+            <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; text-align: center;">
                 <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 10px;">Password</div>
-                <div style="font-size: 24px; font-weight: 700; color: var(--primary-blue); font-family: monospace;" id="user_password">
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary); font-family: monospace;" id="user_password">
                     N/A
                 </div>
             </div>

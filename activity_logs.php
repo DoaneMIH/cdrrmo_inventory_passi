@@ -226,7 +226,7 @@ require_once 'includes/header.php';
                                 </span>
                             </td>
                             <td>
-                                <strong style="color: var(--primary-blue);">
+                                <strong style="color: var(--primary);">
                                     <?php echo ucwords(str_replace('_', ' ', $log['action'])); ?>
                                 </strong>
                             </td>

@@ -56,22 +56,32 @@ require_once 'includes/header.php';
         </a>
     </div>
     <div style="display: flex; gap: 10px;">
-        <button onclick="window.print()" class="btn btn-primary">
-            <i class="fas fa-print"></i> Print Report
-        </button>
-        <button onclick="exportToCSV()" class="btn btn-success">
-            <i class="fas fa-file-csv"></i> Export CSV
-        </button>
-    </div>
+    <button onclick="printProfessionalReport('valuationTable', 'INVENTORY VALUATION REPORT', '')" class="btn btn-primary">
+        <i class="fas fa-print"></i> Print Report
+    </button>
+    <button onclick="exportReportToExcel('valuationTable', 'INVENTORY VALUATION REPORT', 'Valuation_Report_<?php echo date('Y-m-d'); ?>.xlsx')" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Export Excel
+    </button>
+</div>
 </div>
 
-<!-- Report Header -->
+<!-- Report Header with Dual Logos -->
 <div class="card" style="margin-bottom: 20px;">
-    <div style="padding: 40px; text-align: center; border-bottom: 3px solid var(--primary-blue);">
-        <h1 style="margin: 0; color: var(--primary-blue); font-size: 28px;">PASSI CITY</h1>
-        <h2 style="margin: 5px 0 0 0; color: var(--gray-700); font-size: 18px;">DISASTER RISK REDUCTION & MANAGEMENT OFFICE</h2>
-        <h3 style="margin: 15px 0 5px 0; color: var(--gray-700); font-size: 20px; font-weight: 600;">INVENTORY VALUATION REPORT</h3>
-        <p style="margin: 0; color: var(--gray-600);">Generated: <?php echo date('F d, Y h:i A'); ?></p>
+    <div style="padding: 30px 40px; border-bottom: 3px solid var(--primary);">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 24px;">
+            <img src="images/logo.jpg" alt="CDRRMO Logo" style="width: 75px; height: 75px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gray-300);">
+            <div style="text-align: center; flex: 1;">
+                <div style="font-size: 13px; color: var(--gray-600); margin-bottom: 2px;">Republic of the Philippines</div>
+                <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Province of Iloilo</div>
+                <h1 style="margin: 0; color: var(--primary); font-size: 24px; font-weight: 800;">CITY OF PASSI</h1>
+                <h2 style="margin: 4px 0 0 0; color: var(--gray-700); font-size: 14px; font-weight: 600;">City Disaster Risk Reduction and Management Office</h2>
+                <div style="margin-top: 14px; padding-top: 10px; border-top: 2px solid var(--primary-100);">
+                    <h3 style="margin: 0; color: var(--gray-800); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;">Inventory Valuation Report</h3>
+                    <p style="margin: 4px 0 0; color: var(--gray-500); font-size: 12px;">Generated: <?php echo date('F d, Y h:i A'); ?></p>
+                </div>
+            </div>
+            <img src="images/logo1.png" alt="City Logo" style="width: 75px; height: 75px; border-radius: 50%; object-fit: contain; border: 2px solid var(--gray-300);">
+        </div>
     </div>
 </div>
 
@@ -79,9 +89,9 @@ require_once 'includes/header.php';
 <div class="card" style="margin-bottom: 20px;">
     <div style="padding: 20px;">
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-            <div style="text-align: center; padding: 20px; background: var(--light-blue); border-radius: 8px;">
-                <div style="font-size: 13px; color: var(--primary-blue); margin-bottom: 8px;">Current Inventory Value</div>
-                <div style="font-size: 32px; font-weight: 700; color: var(--primary-blue);">
+            <div style="text-align: center; padding: 20px; background: var(--primary-50); border-radius: 8px;">
+                <div style="font-size: 13px; color: var(--primary); margin-bottom: 8px;">Current Inventory Value</div>
+                <div style="font-size: 32px; font-weight: 700; color: var(--primary);">
                     ₱<?php echo number_format($totals['current_value'], 2); ?>
                 </div>
                 <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">Based on current stock</div>
@@ -116,7 +126,7 @@ require_once 'includes/header.php';
     <div style="padding: 20px;">
         <table style="width: 100%; border-collapse: collapse;" id="valuationTable">
             <thead>
-                <tr style="background: var(--primary-blue); color: white;">
+                <tr style="background: var(--primary); color: white;">
                     <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Item Code</th>
                     <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Description</th>
                     <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Category</th>
@@ -137,7 +147,7 @@ require_once 'includes/header.php';
                             <?php echo number_format($item['items_on_hand']); ?>
                         </td>
                         <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">₱<?php echo number_format($item['unit_cost'], 2); ?></td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: 700; color: var(--primary-blue);">
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: 700; color: var(--primary);">
                             ₱<?php echo number_format($item['current_value'], 2); ?>
                         </td>
                         <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">
@@ -149,7 +159,7 @@ require_once 'includes/header.php';
                 <!-- Totals Row -->
                 <tr style="background: var(--gray-100); font-weight: 700;">
                     <td colspan="5" style="padding: 12px; border: 1px solid #ddd; text-align: right;">TOTALS:</td>
-                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right; color: var(--primary-blue);">
+                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right; color: var(--primary);">
                         ₱<?php echo number_format($totals['current_value'], 2); ?>
                     </td>
                     <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">100.00%</td>
@@ -159,35 +169,6 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<script>
-function exportToCSV() {
-    const table = document.getElementById('valuationTable');
-    let csv = [];
-    
-    csv.push('"PASSI CITY - DRRMO"');
-    csv.push('"INVENTORY VALUATION REPORT"');
-    csv.push('"Generated: <?php echo date('F d, Y h:i A'); ?>"');
-    csv.push('');
-    csv.push('"Current Inventory Value","₱<?php echo number_format($totals['current_value'], 2); ?>"');
-    csv.push('"Total Received Value","₱<?php echo number_format($totals['received_value'], 2); ?>"');
-    csv.push('"Total Distributed Value","₱<?php echo number_format($totals['distributed_value'], 2); ?>"');
-    csv.push('');
-    
-    for (let row of table.rows) {
-        let rowData = [];
-        for (let cell of row.cells) {
-            rowData.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
-        }
-        csv.push(rowData.join(','));
-    }
-    
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'valuation_report_<?php echo date('Y-m-d'); ?>.csv';
-    a.click();
-}
-</script>
+<?php require_once 'includes/report_functions.php'; ?>
 
 <?php require_once 'includes/footer.php'; ?>

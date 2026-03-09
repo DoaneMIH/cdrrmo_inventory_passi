@@ -51,7 +51,7 @@ require_once 'includes/header.php';
     <!-- Submit Feedback Form -->
     <div class="card">
         <div style="padding: 25px;">
-            <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">
                 <i class="fas fa-comment-dots"></i> Send Feedback
             </h2>
             
@@ -102,7 +102,7 @@ require_once 'includes/header.php';
     <!-- My Feedback History -->
     <div class="card">
         <div style="padding: 25px;">
-            <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+            <h2 style="margin-bottom: 20px; color: var(--primary);">
                 <i class="fas fa-history"></i> My Feedback History
             </h2>
             
@@ -153,8 +153,8 @@ require_once 'includes/header.php';
                             </p>
                             
                             <?php if ($feedback['admin_response']): ?>
-                                <div style="background: #dbeafe; border-left: 3px solid var(--primary-blue); padding: 10px; margin-top: 10px; border-radius: 4px;">
-                                    <div style="font-weight: 600; color: var(--primary-blue); font-size: 12px; margin-bottom: 5px;">
+                                <div style="background: #dbeafe; border-left: 3px solid var(--primary); padding: 10px; margin-top: 10px; border-radius: 4px;">
+                                    <div style="font-weight: 600; color: var(--primary); font-size: 12px; margin-bottom: 5px;">
                                         <i class="fas fa-reply"></i> Admin Response
                                         <?php if ($feedback['responded_by_name']): ?>
                                             by <?php echo htmlspecialchars($feedback['responded_by_name']); ?>

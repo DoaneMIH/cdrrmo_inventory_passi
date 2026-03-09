@@ -55,7 +55,7 @@ $stmt->close();
     <div style="background: var(--gray-50); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
             <div>
-                <h2 style="margin: 0; color: var(--primary-blue); font-size: 24px;">
+                <h2 style="margin: 0; color: var(--primary); font-size: 24px;">
                     <?php echo htmlspecialchars($t['transaction_code']); ?>
                 </h2>
                 <p style="margin: 5px 0 0 0; color: var(--gray-600);">
@@ -161,9 +161,9 @@ $stmt->close();
                     ₱<?php echo number_format($t['unit_cost'], 2); ?>
                 </div>
             </div>
-            <div style="grid-column: 1 / -1; background: var(--light-blue); padding: 15px; border-radius: 6px;">
-                <div style="color: var(--primary-blue); font-size: 13px; margin-bottom: 5px; font-weight: 600;">Total Cost</div>
-                <div style="font-size: 28px; font-weight: 700; color: var(--primary-blue);">
+            <div style="grid-column: 1 / -1; background: var(--primary-50); padding: 15px; border-radius: 6px;">
+                <div style="color: var(--primary); font-size: 13px; margin-bottom: 5px; font-weight: 600;">Total Cost</div>
+                <div style="font-size: 28px; font-weight: 700; color: var(--primary);">
                     ₱<?php echo number_format($t['total_cost'], 2); ?>
                 </div>
             </div>
@@ -279,7 +279,7 @@ $stmt->close();
     <?php endif; ?>
 
     <!-- Audit Information -->
-    <div style="background: var(--gray-50); padding: 15px; border-radius: 6px; border-left: 4px solid var(--secondary-blue);">
+    <div style="background: var(--gray-50); padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary-light);">
         <h4 style="margin: 0 0 10px 0; color: var(--gray-700); font-size: 14px;">
             <i class="fas fa-history"></i> Audit Information
         </h4>

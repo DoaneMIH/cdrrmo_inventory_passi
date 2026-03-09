@@ -56,19 +56,19 @@ require_once 'includes/header.php';
         </a>
     </div>
     <div style="display: flex; gap: 10px;">
-        <button onclick="window.print()" class="btn btn-primary">
-            <i class="fas fa-print"></i> Print Report
-        </button>
-        <button onclick="exportToCSV()" class="btn btn-success">
-            <i class="fas fa-file-csv"></i> Export CSV
-        </button>
-    </div>
+    <button onclick="printProfessionalReport('supplierTable', 'SUPPLIER TRANSACTION REPORT', '')" class="btn btn-primary">
+        <i class="fas fa-print"></i> Print Report
+    </button>
+    <button onclick="exportReportToExcel('supplierTable', 'SUPPLIER TRANSACTION REPORT', 'Supplier_Report_<?php echo date('Y-m-d'); ?>.xlsx')" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Export Excel
+    </button>
+</div>
 </div>
 
 <!-- Report Header -->
 <div class="card" style="margin-bottom: 20px;">
-    <div style="padding: 40px; text-align: center; border-bottom: 3px solid var(--primary-blue);">
-        <h1 style="margin: 0; color: var(--primary-blue); font-size: 28px;">PASSI CITY</h1>
+    <div style="padding: 40px; text-align: center; border-bottom: 3px solid var(--primary);">
+        <h1 style="margin: 0; color: var(--primary); font-size: 28px;">PASSI CITY</h1>
         <h2 style="margin: 5px 0 0 0; color: var(--gray-700); font-size: 18px;">DISASTER RISK REDUCTION & MANAGEMENT OFFICE</h2>
         <h3 style="margin: 15px 0 5px 0; color: var(--gray-700); font-size: 20px; font-weight: 600;">SUPPLIER TRANSACTION REPORT</h3>
         <p style="margin: 0; color: var(--gray-600);">Generated: <?php echo date('F d, Y h:i A'); ?></p>
@@ -79,9 +79,9 @@ require_once 'includes/header.php';
 <div class="card" style="margin-bottom: 20px;">
     <div style="padding: 20px;">
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-            <div style="text-align: center; padding: 15px; background: var(--light-blue); border-radius: 6px;">
-                <div style="font-size: 12px; color: var(--primary-blue); margin-bottom: 5px;">Total Suppliers</div>
-                <div style="font-size: 24px; font-weight: 700; color: var(--primary-blue);">
+            <div style="text-align: center; padding: 15px; background: var(--primary-50); border-radius: 6px;">
+                <div style="font-size: 12px; color: var(--primary); margin-bottom: 5px;">Total Suppliers</div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary);">
                     <?php echo number_format($grand_totals['suppliers']); ?>
                 </div>
             </div>
@@ -112,7 +112,7 @@ require_once 'includes/header.php';
     <div style="padding: 20px;">
         <table style="width: 100%; border-collapse: collapse;" id="supplierTable">
             <thead>
-                <tr style="background: var(--primary-blue); color: white;">
+                <tr style="background: var(--primary); color: white;">
                     <th style="padding: 12px; text-align: left; border: 1px solid #ddd; color: white;">Supplier Name</th>
                     <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Contact Person</th>
                     <th style="padding: 12px; text-align: left; border: 1px solid #ddd;color: white;">Phone</th>
@@ -140,7 +140,7 @@ require_once 'includes/header.php';
                         <td style="padding: 10px; border: 1px solid #ddd; text-align: center; font-weight: 600;">
                             <?php echo number_format($supplier['total_quantity']); ?>
                         </td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: 700; color: var(--primary-blue);">
+                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: 700; color: var(--primary);">
                             ₱<?php echo number_format($supplier['total_value'], 2); ?>
                         </td>
                         <td style="padding: 10px; border: 1px solid #ddd;">
@@ -172,7 +172,7 @@ require_once 'includes/header.php';
                     <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">
                         <?php echo number_format($grand_totals['quantity']); ?>
                     </td>
-                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right; color: var(--primary-blue);">
+                    <td style="padding: 12px; border: 1px solid #ddd; text-align: right; color: var(--primary);">
                         ₱<?php echo number_format($grand_totals['value'], 2); ?>
                     </td>
                     <td style="padding: 12px; border: 1px solid #ddd;"></td>
@@ -182,31 +182,7 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<script>
-function exportToCSV() {
-    const table = document.getElementById('supplierTable');
-    let csv = [];
-    
-    csv.push('"PASSI CITY - DRRMO"');
-    csv.push('"SUPPLIER TRANSACTION REPORT"');
-    csv.push('"Generated: <?php echo date('F d, Y h:i A'); ?>"');
-    csv.push('');
-    
-    for (let row of table.rows) {
-        let rowData = [];
-        for (let cell of row.cells) {
-            rowData.push('"' + cell.textContent.trim().replace(/"/g, '""') + '"');
-        }
-        csv.push(rowData.join(','));
-    }
-    
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'supplier_report_<?php echo date('Y-m-d'); ?>.csv';
-    a.click();
-}
-</script>
+
+<?php require_once 'includes/report_functions.php'; ?>
 
 <?php require_once 'includes/footer.php'; ?>

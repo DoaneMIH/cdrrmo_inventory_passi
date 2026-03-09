@@ -75,12 +75,12 @@ require_once 'includes/header.php';
 .form-header {
     text-align: center;
     margin-bottom: 30px;
-    border-bottom: 3px solid var(--primary-blue);
+    border-bottom: 3px solid var(--primary);
     padding-bottom: 20px;
 }
 .form-header h1 {
     margin: 0;
-    color: var(--primary-blue);
+    color: var(--primary);
     font-size: 28px;
     font-weight: 700;
 }
@@ -103,7 +103,7 @@ require_once 'includes/header.php';
     margin: 20px 0;
 }
 .inventory-table th {
-    background: var(--primary-blue);
+    background: var(--primary);
     color: white;
     padding: 12px;
     text-align: center;
@@ -129,10 +129,10 @@ require_once 'includes/header.php';
     resize: vertical;
 }
 .calculated-field {
-    background: var(--light-blue);
+    background: var(--primary-50);
     font-size: 18px;
     font-weight: 700;
-    color: var(--primary-blue);
+    color: var(--primary);
     text-align: center;
     padding: 12px !important;
 }

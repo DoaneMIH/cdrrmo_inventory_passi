@@ -77,12 +77,12 @@ require_once 'includes/header.php';
 .form-header {
     text-align: center;
     margin-bottom: 30px;
-    border-bottom: 3px solid var(--primary-blue);
+    border-bottom: 3px solid var(--primary);
     padding-bottom: 20px;
 }
 .form-header h1 {
     margin: 0;
-    color: var(--primary-blue);
+    color: var(--primary);
     font-size: 28px;
     font-weight: 700;
 }
@@ -105,7 +105,7 @@ require_once 'includes/header.php';
     margin: 20px 0;
 }
 .inventory-table th {
-    background: var(--primary-blue);
+    background: var(--primary);
     color: white;
     padding: 12px;
     text-align: center;
@@ -135,10 +135,10 @@ require_once 'includes/header.php';
     padding: 12px !important;
 }
 .info-box {
-    background: var(--light-blue);
+    background: var(--primary-50);
     padding: 15px;
     border-radius: 6px;
-    border-left: 4px solid var(--secondary-blue);
+    border-left: 4px solid var(--primary-light);
     margin-bottom: 20px;
 }
 </style>
@@ -153,8 +153,8 @@ require_once 'includes/header.php';
     <div class="info-box">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <strong style="color: var(--primary-blue); font-size: 16px;">Item Code:</strong>
-                <span style="font-size: 20px; font-weight: 700; color: var(--primary-blue); margin-left: 10px;">
+                <strong style="color: var(--primary); font-size: 16px;">Item Code:</strong>
+                <span style="font-size: 20px; font-weight: 700; color: var(--primary); margin-left: 10px;">
                     <?php echo htmlspecialchars($item['item_code']); ?>
                 </span>
             </div>
@@ -260,7 +260,7 @@ require_once 'includes/header.php';
                     <td class="readonly-field">
                         <?php echo number_format($item['items_distributed']); ?>
                     </td>
-                    <td class="readonly-field" style="background: var(--light-blue); color: var(--primary-blue);">
+                    <td class="readonly-field" style="background: var(--primary-50); color: var(--primary);">
                         <?php echo number_format($item['items_on_hand']); ?>
                     </td>
                 </tr>

@@ -95,7 +95,7 @@ require_once 'includes/header.php';
 
 <div class="card" style="max-width: 800px; margin: 0 auto;">
     <div style="padding: 30px;">
-        <h2 style="margin-bottom: 20px; color: var(--primary-blue);">
+        <h2 style="margin-bottom: 20px; color: var(--primary);">
             <i class="fas fa-plus-circle"></i> Receive Items
         </h2>
         
@@ -167,7 +167,7 @@ require_once 'includes/header.php';
                  -->
                 <div class="form-group">
                     <label class="form-label">Total Cost (₱)</label>
-                    <div style="background: var(--light-blue); padding: 12px 15px; border-radius: 6px; font-weight: 700; color: var(--primary-blue); font-size: 18px;">
+                    <div style="background: var(--primary-50); padding: 12px 15px; border-radius: 6px; font-weight: 700; color: var(--primary); font-size: 18px;">
                         ₱<span id="totalCost">0.00</span>
                     </div>
                 </div>
@@ -196,8 +196,8 @@ require_once 'includes/header.php';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div class="form-group">
-                    <label class="form-label">RIS No.</label>
-                    <input type="text" name="reference_number" class="form-control" 
+                    <label class="form-label">RIS No. *</label>
+                    <input type="text" name="reference_number" class="form-control" required 
                         placeholder="PO/DR/Invoice number">
                 </div>
                 
