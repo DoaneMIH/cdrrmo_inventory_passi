@@ -24,7 +24,7 @@ $db_size_query = $conn->query("
 ");
 $db_size = $db_size_query->fetch_assoc()['size_mb'];
 
-// Get low stock count
+// Get stock alert count
 $low_stock_count = $conn->query("
     SELECT COUNT(*) as count 
     FROM inventory_items 
@@ -121,7 +121,7 @@ require_once 'includes/header.php';
         </div>
         
         <div class="info-row">
-            <span class="info-label">Low Stock Items</span>
+            <span class="info-label">Stock Alert Items</span>
             <span class="info-value" style="color: <?php echo $low_stock_count > 0 ? 'var(--danger)' : 'var(--success)'; ?>">
                 <?php echo number_format($low_stock_count); ?>
             </span>
@@ -201,7 +201,7 @@ require_once 'includes/header.php';
             </li>
             <li>
                 <i class="fas fa-check-circle"></i>
-                <span>Low stock alerts and automated notifications</span>
+                <span>Stock alert alerts and automated notifications</span>
             </li>
             <li>
                 <i class="fas fa-check-circle"></i>
@@ -341,7 +341,7 @@ require_once 'includes/header.php';
                 <i class="fas fa-exclamation-triangle"></i> Stock Alert
             </div>
             <div style="font-size: 12px; color: var(--gray-600);">
-                Monitor low stock with filters
+                Monitor stock alert with filters
             </div>
         </div>
         
@@ -416,7 +416,7 @@ require_once 'includes/header.php';
         <div style="padding: 12px; border-left: 3px solid var(--primary); background: var(--gray-50);">
             <strong>6. Stock Alert Report</strong>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 5px;">
-                Low stock items with restock cost estimates
+                Stock alert items with restock cost estimates
             </div>
         </div>
         
@@ -456,7 +456,7 @@ require_once 'includes/header.php';
         <ul>
             <li>Fixed column alignment in all reports</li>
             <li>Added filter functionality to Stock Alert</li>
-            <li>Changed "Low Stock Alert" to "Stock Alert"</li>
+            <li>Changed "Stock Alert Alert" to "Stock Alert"</li>
             <li>Removed Total Cost column from Transactions</li>
             <li>Changed "Date Borrowed" to "Date Issued" in custodian slips</li>
         </ul>

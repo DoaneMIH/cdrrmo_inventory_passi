@@ -196,8 +196,8 @@ require_once 'includes/header.php';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div class="form-group">
-                    <label class="form-label">RIS No. *</label>
-                    <input type="text" name="reference_number" class="form-control" required 
+                    <label class="form-label">RIS No.</label>
+                    <input type="text" name="reference_number" class="form-control" 
                         placeholder="PO/DR/Invoice number">
                 </div>
                 

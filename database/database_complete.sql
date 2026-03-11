@@ -439,7 +439,7 @@ SELECT
     sl.location_name,
     CASE 
         WHEN i.items_on_hand = 0 THEN 'Out of Stock'
-        WHEN i.items_on_hand <= i.minimum_stock_level THEN 'Low Stock'
+        WHEN i.items_on_hand <= i.minimum_stock_level THEN 'Stock Alert'
         WHEN i.expiration_date IS NOT NULL AND DATEDIFF(i.expiration_date, CURDATE()) <= 30 THEN 'Expiring Soon'
         ELSE 'Normal'
     END AS stock_status,
@@ -472,7 +472,7 @@ JOIN categories c ON i.category_id = c.id
 LEFT JOIN suppliers s ON t.supplier_id = s.id
 LEFT JOIN users u ON t.created_by = u.id;
 
--- View: Low stock alerts
+-- View: Stock alert alerts
 CREATE OR REPLACE VIEW v_low_stock_items AS
 SELECT 
     i.id,
@@ -510,7 +510,7 @@ ORDER BY i.expiration_date ASC;
 -- CREATE TRIGGERS FOR AUTOMATION
 -- ============================================================================
 
--- Trigger: Auto-generate stock alerts for low stock
+-- Trigger: Auto-generate stock alerts for stock alert
 DELIMITER $$
 CREATE TRIGGER tr_check_low_stock_after_transaction
 AFTER INSERT ON transactions

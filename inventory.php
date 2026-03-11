@@ -179,7 +179,7 @@ require_once 'includes/header.php';
             <select name="status" class="form-control" style="width: 150px;">
                 <option value="">All Status</option>
                 <option value="in_stock" <?php echo $status_filter === 'in_stock' ? 'selected' : ''; ?>>In Stock</option>
-                <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Low Stock</option>
+                <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Stock Alert</option>
                 <option value="out_of_stock" <?php echo $status_filter === 'out_of_stock' ? 'selected' : ''; ?>>Out of Stock</option>
             </select>
             
@@ -312,7 +312,7 @@ require_once 'includes/header.php';
                                 <?php if ($row['items_on_hand'] <= 0): ?>
                                     <span class="badge badge-danger">Out of Stock</span>
                                 <?php elseif ($row['items_on_hand'] <= $row['minimum_stock_level']): ?>
-                                    <span class="badge badge-warning">Low Stock</span>
+                                    <span class="badge badge-warning">Stock Alert</span>
                                 <?php else: ?>
                                     <span class="badge badge-success">In Stock</span>
                                 <?php endif; ?>

@@ -130,7 +130,7 @@ require_once 'includes/header.php';
                 </div>
             </div>
             <div style="text-align: center; padding: 15px; background: #fee2e2; border-radius: 6px;">
-                <div style="font-size: 12px; color: #991b1b; margin-bottom: 5px;">Low Stock</div>
+                <div style="font-size: 12px; color: #991b1b; margin-bottom: 5px;">Stock Alert</div>
                 <div style="font-size: 24px; font-weight: 700; color: #991b1b;">
                     <?php echo number_format($grand_totals['low_stock']); ?>
                 </div>
@@ -152,7 +152,7 @@ require_once 'includes/header.php';
                     <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Received</th>
                     <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Distributed</th>
                     <th style="padding: 12px; text-align: right; border: 1px solid #ddd;color: white;">Total Value</th>
-                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Low Stock</th>
+                    <th style="padding: 12px; text-align: center; border: 1px solid #ddd;color: white;">Stock Alert</th>
                 </tr>
             </thead>
             <tbody>

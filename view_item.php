@@ -204,7 +204,7 @@ require_once 'includes/header.php';
                 </div>
             <?php elseif ($item['items_on_hand'] <= $item['minimum_stock_level']): ?>
                 <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i> <strong>LOW STOCK WARNING</strong> - Current stock (<?php echo number_format($item['items_on_hand']); ?>) is below minimum level (<?php echo number_format($item['minimum_stock_level']); ?>)
+                    <i class="fas fa-exclamation-triangle"></i> <strong>STOCK ALERT WARNING</strong> - Current stock (<?php echo number_format($item['items_on_hand']); ?>) is below minimum level (<?php echo number_format($item['minimum_stock_level']); ?>)
                 </div>
             <?php endif; ?>
         </div>

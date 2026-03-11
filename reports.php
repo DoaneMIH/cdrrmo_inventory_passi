@@ -69,7 +69,7 @@ require_once 'includes/header.php';
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h3 style="margin: 0; color: var(--gray-800);">Low Stock Report</h3>
+                    <h3 style="margin: 0; color: var(--gray-800);">Stock Alert Report</h3>
                     <p style="margin: 5px 0 0 0; color: var(--gray-500); font-size: 13px;">
                         Items needing restock
                     </p>
@@ -78,7 +78,7 @@ require_once 'includes/header.php';
             <p style="color: var(--gray-600); font-size: 14px; margin-bottom: 15px;">
                 List of items below minimum stock levels that need immediate attention.
             </p>
-            <a href="low_stock.php" class="btn btn-warning btn-block">
+            <a href="stock_alert.php" class="btn btn-warning btn-block">
                 <i class="fas fa-file-alt"></i> View Report
             </a>
         </div>
@@ -250,7 +250,7 @@ $trans_data = $trans_stats->fetch_assoc();
             </div>
             
             <div style="background: #fee2e2; padding: 20px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 14px; color: #991b1b; margin-bottom: 5px;">Low Stock Items</div>
+                <div style="font-size: 14px; color: #991b1b; margin-bottom: 5px;">Stock Alert Items</div>
                 <div style="font-size: 32px; font-weight: 700; color: #991b1b;">
                     <?php echo number_format($quick_stats['low_stock_count']); ?>
                 </div>

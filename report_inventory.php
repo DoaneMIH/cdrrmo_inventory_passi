@@ -116,7 +116,7 @@ require_once 'includes/header.php';
             
             <select name="status" class="form-control" style="width: 180px;">
                 <option value="">All Status</option>
-                <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Low Stock</option>
+                <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Stock Alert</option>
                 <option value="out_of_stock" <?php echo $status_filter === 'out_of_stock' ? 'selected' : ''; ?>>Out of Stock</option>
             </select>
             
@@ -223,7 +223,7 @@ require_once 'includes/header.php';
                             <?php if ($item['items_on_hand'] <= 0): ?>
                                 <span style="color: #dc2626; font-weight: 600;">Out of Stock</span>
                             <?php elseif ($item['items_on_hand'] <= $item['minimum_stock_level']): ?>
-                                <span style="color: #f59e0b; font-weight: 600;">Low Stock</span>
+                                <span style="color: #f59e0b; font-weight: 600;">Stock Alert</span>
                             <?php else: ?>
                                 <span style="color: #059669; font-weight: 600;">In Stock</span>
                             <?php endif; ?>

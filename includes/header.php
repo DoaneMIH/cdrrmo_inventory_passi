@@ -35,8 +35,8 @@ if (!isset($_SESSION['user_id'])) {
                 <a href="inventory.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'inventory.php' ? 'active' : ''; ?>">
                     <i class="fas fa-boxes"></i> All Items
                 </a>
-                <a href="low_stock.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'low_stock.php' ? 'active' : ''; ?>">
-                    <i class="fas fa-exclamation-triangle"></i> Low Stock
+                <a href="stock_alert.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'stock_alert.php' ? 'active' : ''; ?>">
+                    <i class="fas fa-exclamation-triangle"></i> Stock Alert
                 </a>
                 
                 <div class="menu-divider">Transactions</div>

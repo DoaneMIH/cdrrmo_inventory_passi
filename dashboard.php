@@ -20,7 +20,7 @@ $stats['total_items'] = $result->fetch_assoc()['count'];
 $result = $conn->query("SELECT COUNT(*) as count FROM categories WHERE is_active = 1");
 $stats['total_categories'] = $result->fetch_assoc()['count'];
 
-// Low stock items
+// Stock alert items
 $result = $conn->query("SELECT COUNT(*) as count FROM inventory_items WHERE items_on_hand <= minimum_stock_level AND is_active = 1");
 $stats['low_stock'] = $result->fetch_assoc()['count'];
 
@@ -44,7 +44,7 @@ $recent_transactions = $conn->query("
     LIMIT 10
 ");
 
-// Get low stock items
+// Get stock alert items
 $low_stock_items = $conn->query("
     SELECT 
         i.item_code,
@@ -106,7 +106,7 @@ require_once 'includes/header.php';
             <i class="fas fa-exclamation-triangle"></i>
         </div>
         <div class="stat-info">
-            <div class="stat-label">Low Stock Items</div>
+            <div class="stat-label">Stock Alert Items</div>
             <div class="stat-value"><?php echo number_format($stats['low_stock']); ?></div>
         </div>
     </div>
@@ -122,7 +122,7 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<!-- Recent Transactions and Low Stock -->
+<!-- Recent Transactions and Stock Alert -->
 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
     <!-- Recent Transactions -->
     <div class="table-container">
@@ -173,11 +173,11 @@ require_once 'includes/header.php';
         </div>
     </div>
     
-    <!-- Low Stock Alert -->
+    <!-- Stock Alert Alert -->
     <div class="table-container">
         <div class="table-header">
-            <h3 class="table-title">Low Stock Alert</h3>
-            <a href="low_stock.php" class="btn btn-sm btn-danger">View All</a>
+            <h3 class="table-title">Stock Alert Alert</h3>
+            <a href="stock_alert.php" class="btn btn-sm btn-danger">View All</a>
         </div>
         <div class="table-responsive">
             <table>
