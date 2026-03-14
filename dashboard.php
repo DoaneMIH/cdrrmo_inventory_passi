@@ -123,7 +123,7 @@ require_once 'includes/header.php';
 </div>
 
 <!-- Recent Transactions and Stock Alert -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+<div class="dashboard-main-grid">
     <!-- Recent Transactions -->
     <div class="table-container">
         <div class="table-header">
@@ -192,8 +192,8 @@ require_once 'includes/header.php';
                         <?php while ($row = $low_stock_items->fetch_assoc()): ?>
                             <tr>
                                 <td>
-                                    <div style="font-weight: 600;"><?php echo htmlspecialchars($row['item_code']); ?></div>
-                                    <div style="font-size: 12px; color: #6b7280;">
+                                    <div class="dashboard-item-code"><?php echo htmlspecialchars($row['item_code']); ?></div>
+                                    <div class="dashboard-item-desc">
                                         <?php echo htmlspecialchars(substr($row['item_description'], 0, 30)) . (strlen($row['item_description']) > 30 ? '...' : ''); ?>
                                     </div>
                                 </td>

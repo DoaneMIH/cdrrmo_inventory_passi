@@ -142,9 +142,9 @@ require_once 'includes/header.php';
 </div>
 <?php endif; ?>
 
-<div style="margin-bottom: 20px; margin-right: 5px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <form method="GET" style="display: flex; gap: 10px; flex-wrap: wrap;">
+<div class="inventory-toolbar">
+    <div class="inventory-filters">
+        <form method="GET" class="inventory-filter-form">
             <div class="search-bar">
                 <i class="fas fa-search search-icon"></i>
                 <input 
@@ -158,7 +158,7 @@ require_once 'includes/header.php';
                 >
             </div>
             
-            <select name="category" class="form-control" style="width: 200px;">
+            <select name="category" class="form-control inventory-cat-select">
                 <option value="">All Categories</option>
                 <?php while ($cat = $categories->fetch_assoc()): ?>
                     <option value="<?php echo $cat['id']; ?>" <?php echo $category_filter == $cat['id'] ? 'selected' : ''; ?>>
@@ -167,7 +167,7 @@ require_once 'includes/header.php';
                 <?php endwhile; ?>
             </select>
             
-            <select name="location" class="form-control" style="width: 200px;">
+            <select name="location" class="form-control inventory-cat-select">
                 <option value="">All Storage Locations</option>
                 <?php while ($loc = $storage_locations->fetch_assoc()): ?>
                     <option value="<?php echo $loc['id']; ?>" <?php echo $location_filter == $loc['id'] ? 'selected' : ''; ?>>
@@ -176,7 +176,7 @@ require_once 'includes/header.php';
                 <?php endwhile; ?>
             </select>
             
-            <select name="status" class="form-control" style="width: 150px;">
+            <select name="status" class="form-control" style="width:150px;">
                 <option value="">All Status</option>
                 <option value="in_stock" <?php echo $status_filter === 'in_stock' ? 'selected' : ''; ?>>In Stock</option>
                 <option value="low_stock" <?php echo $status_filter === 'low_stock' ? 'selected' : ''; ?>>Stock Alert</option>
@@ -195,7 +195,7 @@ require_once 'includes/header.php';
         </form>
     </div>
     
-    <div style="display: flex; gap: 10px; align-items: center;">
+    <div class="flex gap-10 align-center">
         <?php if ($is_admin): ?>
             <button id="bulkDeleteBtn" class="btn btn-danger" style="display: none;" onclick="confirmBulkDelete()">
                 <i class="fas fa-trash-alt"></i> Delete Selected (<span id="selectedCount">0</span>)
@@ -216,11 +216,11 @@ require_once 'includes/header.php';
 <?php endif; ?>
 
 <div class="table-container">
-    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="table-header">
         <h3 class="table-title">Inventory Items (<?php echo number_format($total); ?> total)</h3>
         <?php if ($is_admin && $total > 0): ?>
-            <label style="font-size: 13px; color: #6b7280; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="margin-right: 6px;">
+            <label class="user-checkbox-label" style="font-size:13px;color:#6b7280;">
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="margin-right:6px;">
                 Select All on Page
             </label>
         <?php endif; ?>
@@ -258,7 +258,7 @@ require_once 'includes/header.php';
                                         class="row-checkbox" 
                                         value="<?php echo $row['id']; ?>" 
                                         onchange="updateBulkDeleteBtn()"
-                                        style="cursor: pointer;"
+                                        class="bulk-action-btn"
                                     >
                                 </td>
                             <?php endif; ?>
@@ -302,7 +302,7 @@ require_once 'includes/header.php';
                                         <?php echo date('M d, Y', $expiry); ?>
                                     <?php endif; ?>
                                 <?php else: ?>
-                                    <span style="color: var(--gray-400);">-</span>
+                                    <span class="text-muted">-</span>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo number_format($row['minimum_stock_level']); ?></td>
@@ -318,7 +318,7 @@ require_once 'includes/header.php';
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <div style="display: flex; gap: 8px; align-items: center;">
+                                <div class="flex gap-10 align-center">
                                     <a href="view_item.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-primary" title="View Details" style="padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px;">
                                         <i class="fas fa-eye"></i>
                                     </a>
@@ -329,7 +329,7 @@ require_once 'includes/header.php';
                                     <?php if ($is_admin): ?>
                                         <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['item_code'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars(substr($row['item_description'], 0, 50), ENT_QUOTES); ?>')" 
                                             class="btn btn-sm btn-danger" title="Delete" 
-                                            style="padding: 6px 12px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: none; cursor: pointer;">
+                                            class="bulk-action-btn">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     <?php endif; ?>
@@ -375,9 +375,9 @@ require_once 'includes/header.php';
 <!-- Single Delete Confirmation Modal -->
 <div id="deleteModal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center;">
     <!-- Backdrop -->
-    <div onclick="closeDeleteModal()" style="position:absolute; inset:0; background:rgba(0,0,0,0.45);"></div>
+    <div onclick="closeDeleteModal()" class="inline-modal-overlay"></div>
     <!-- Dialog -->
-    <div style="position:relative; background:#fff; border-radius:10px; padding:28px 28px 20px; max-width:420px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+    <div class="inline-modal-box">
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
             <div style="background:#fee2e2; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 <i class="fas fa-trash" style="color:#dc2626; font-size:18px;"></i>
@@ -399,8 +399,8 @@ require_once 'includes/header.php';
 
 <!-- Bulk Delete Confirmation Modal -->
 <div id="bulkDeleteModal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center;">
-    <div onclick="closeBulkDeleteModal()" style="position:absolute; inset:0; background:rgba(0,0,0,0.45);"></div>
-    <div style="position:relative; background:#fff; border-radius:10px; padding:28px 28px 20px; max-width:420px; width:90%; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+    <div onclick="closeBulkDeleteModal()" class="inline-modal-overlay"></div>
+    <div class="inline-modal-box">
         <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
             <div style="background:#fee2e2; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 <i class="fas fa-trash-alt" style="color:#dc2626; font-size:18px;"></i>

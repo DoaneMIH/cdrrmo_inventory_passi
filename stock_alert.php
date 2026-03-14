@@ -58,7 +58,7 @@ require_once 'includes/header.php';
 
 
 <!-- Alert Summary Cards -->
-<div class="dashboard-cards" style="margin-bottom: 30px;">
+<div class="dashboard-cards stock-alert-stats">
     <div class="card stat-card">
         <div class="stat-icon red">
             <i class="fas fa-exclamation-circle"></i>
@@ -91,7 +91,7 @@ require_once 'includes/header.php';
 </div>
 
 <?php if ($total_low_stock > 0): ?>
-<div class="alert alert-warning" style="margin-bottom: 20px;">
+<div class="alert alert-warning">
     <i class="fas fa-exclamation-triangle"></i>
     <strong>Attention!</strong> You have <?php echo $total_low_stock; ?> item(s) that need to be restocked.
     <?php if ($out_of_stock > 0): ?>
@@ -101,12 +101,12 @@ require_once 'includes/header.php';
 <?php endif; ?>
 
 <!-- Filter Panel -->
-<div class="card no-print" style="margin-bottom: 20px;">
-    <div style="padding: 20px;">
-        <h3 style="margin: 0 0 15px 0; color: var(--gray-800);"><i class="fas fa-filter"></i> Filter Stock Status</h3>
-        <form method="GET" style="display: flex; gap: 15px; align-items: end; flex-wrap: wrap;">
+<div class="card stock-filter-card no-print">
+    <div class="stock-filter-body">
+        <h3 class="stock-filter-title"><i class="fas fa-filter"></i> Filter Stock Status</h3>
+        <form method="GET" class="report-filter-form-end">
             <div>
-                <label class="form-label" style="display: block; margin-bottom: 5px; font-weight: 600;">Status</label>
+                <label class="form-label">Status</label>
                 <select name="status" class="form-control" style="width: 250px; padding: 8px 12px; border: 1px solid var(--gray-300); border-radius: 5px;">
                     <option value="all" <?php echo $status_filter === 'all' ? 'selected' : ''; ?>>All (Critical & Stock Alert)</option>
                     <option value="critical" <?php echo $status_filter === 'critical' ? 'selected' : ''; ?>>Critical Only (Out of Stock)</option>
@@ -130,7 +130,7 @@ require_once 'includes/header.php';
 <div class="table-container">
     <div class="table-header">
         <h3 class="table-title">Stock Alert</h3>
-        <div style="display: flex; gap: 10px;">
+        <div class="flex gap-10">
     <button onclick="printProfessionalReport('lowStockTable', 'STOCK ALERT ALERT REPORT', '')" class="btn btn-primary">
         <i class="fas fa-print"></i> Print Report
     </button>

@@ -101,13 +101,13 @@ require_once 'includes/header.php';
     </div>
 <?php endif; ?>
 
-<div class="card" style="max-width: 800px; margin: 0 auto;">
-    <div style="padding: 30px;">
-        <h2 style="margin-bottom: 20px; color: var(--primary);">
+<div class="card txn-card-wrap">
+    <div class="txn-card-body">
+        <h2 class="txn-card-title">
             <i class="fas fa-minus-circle"></i> Distribute Items
         </h2>
         
-        <p style="color: var(--gray-600); margin-bottom: 30px;">
+        <p class="txn-card-desc">
             Record outgoing inventory items distributed to beneficiaries or other departments.
         </p>
         
@@ -120,7 +120,7 @@ require_once 'includes/header.php';
         <form method="POST" action="" id="distributeForm">
             <div class="form-group">
                 <label class="form-label">Select Item *</label>
-                <div style="position: relative;" id="itemComboWrapper">
+                <div class="txn-autocomplete-wrap" id="itemComboWrapper">
                     <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; pointer-events:none; z-index:1;"></i>
                     <input
                         type="text"
@@ -128,7 +128,7 @@ require_once 'includes/header.php';
                         class="form-control"
                         placeholder="Type item code or name to search..."
                         autocomplete="off"
-                        style="padding-left: 34px; padding-right: 34px;"
+                        class="item-search-padded"
                         required
                     >
                     <i class="fas fa-times" id="itemClearBtn" onclick="clearItemSearch()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; cursor:pointer; display:none;"></i>
@@ -153,19 +153,19 @@ require_once 'includes/header.php';
             </div>
 
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-grid-2">
                 <div class="form-group">
                     <label class="form-label">Quantity to Distribute *</label>
                     <input type="number" name="quantity" id="quantity" class="form-control" min="1" required 
                         placeholder="Enter quantity">
-                    <small style="color: var(--gray-500); font-size: 12px;">
+                    <small class="password-hint">
                         Available: <strong id="availableStock">-</strong>
                     </small>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Unit</label>
-                    <div style="background: var(--gray-100); padding: 12px 15px; border-radius: 6px; font-weight: 600; color: var(--gray-700);">
+                    <div class="return-modal-item-display">
                         <span id="unitText">-</span>
                     </div>
                 </div>
@@ -177,24 +177,24 @@ require_once 'includes/header.php';
                     value="<?php echo date('Y-m-d'); ?>" max="<?php echo date('Y-m-d'); ?>">
             </div>
             
-            <div style="background: var(--primary-50); padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary-light); margin: 20px 0;">
-                <h3 style="margin: 0 0 15px 0; color: var(--primary); font-size: 16px;">
+            <div class="info-box" style="margin:20px 0;">
+                <h3 class="txn-card-title">
                     <i class="fas fa-user"></i> Recipient Information
                 </h3>
                 
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group">
                     <label class="form-label">Recipient Name *</label>
                     <input type="text" name="recipient_name" class="form-control" required 
                         placeholder="Name of person receiving items">
                 </div>
                 
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group">
                     <label class="form-label">Organization/Department</label>
                     <input type="text" name="recipient_organization" class="form-control" 
                         placeholder="Organization, department, or barangay">
                 </div>
                 
-                <div class="form-group" style="margin-bottom: 0;">
+                <div class="form-group">
                     <label class="form-label">Purpose of Distribution *</label>
                     <textarea name="purpose" class="form-control" rows="2" required 
                         placeholder="Reason or purpose for distributing these items"></textarea>
@@ -208,13 +208,13 @@ require_once 'includes/header.php';
             </div>
             
             <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" name="is_borrowed" id="is_borrowed" value="1" style="width: 18px; height: 18px;">
-                    <span style="font-weight: 600; color: var(--primary);">
+                <label class="checkbox-label-row">
+                    <input type="checkbox" name="is_borrowed" id="is_borrowed" value="1" class="checkbox-icon">
+                    <span class="checkbox-label-text">
                         <i class="fas fa-exchange-alt"></i> This is a borrowed item (will be returned later)
                     </span>
                 </label>
-                <small style="color: var(--gray-500); font-size: 12px; margin-left: 28px;">
+                <small class="checkbox-hint">
                     Check this box if the item will be returned. This allows tracking of borrowed items.
                 </small>
             </div>
@@ -225,7 +225,7 @@ require_once 'includes/header.php';
                     placeholder="Additional notes or comments about this distribution"></textarea>
             </div>
             
-            <div style="display: flex; gap: 10px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+            <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-check"></i> Distribute Items
                 </button>
@@ -277,7 +277,7 @@ while ($item = $items->fetch_assoc()):
         if(!q) return esc(text);
         const i = text.toLowerCase().indexOf(q.toLowerCase());
         if(i === -1) return esc(text);
-        return esc(text.slice(0,i)) + '<mark style="background:#fef9c3;border-radius:2px;padding:0 1px;">' + esc(text.slice(i,i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
+        return esc(text.slice(0,i)) + '<mark class="highlight-match">' + esc(text.slice(i,i+q.length)) + '</mark>' + esc(text.slice(i+q.length));
     }
 
     function openDropdown(q){
@@ -285,7 +285,7 @@ while ($item = $items->fetch_assoc()):
         activeIdx = -1;
         dropdown.innerHTML = '';
         if(filtered.length === 0){
-            dropdown.innerHTML = '<li style="padding:10px 14px;color:#9ca3af;font-size:13px;">No items found.</li>';
+            dropdown.innerHTML = '<li class="item-dropdown-empty">No items found.</li>';
         } else {
             filtered.forEach(function(it, i){
                 const li = document.createElement('li');
