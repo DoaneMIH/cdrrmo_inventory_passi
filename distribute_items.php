@@ -121,7 +121,7 @@ require_once 'includes/header.php';
             <div class="form-group">
                 <label class="form-label">Select Item *</label>
                 <div class="txn-autocomplete-wrap" id="itemComboWrapper">
-                    <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; pointer-events:none; z-index:1;"></i>
+                    <i class="fas fa-search" style="position:absolute; left:2px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:13px; pointer-events:none; z-index:1;"></i>
                     <input
                         type="text"
                         id="itemSearch"

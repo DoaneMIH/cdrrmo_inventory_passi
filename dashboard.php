@@ -76,6 +76,27 @@ $expiring_items = $conn->query("
     LIMIT 5
 ");
 
+// Get category breakdown for bar chart
+$category_chart = $conn->query("
+    SELECT 
+        c.category_name,
+        c.category_code,
+        c.color,
+        COUNT(i.id) as total_items,
+        SUM(CASE WHEN i.items_on_hand > i.minimum_stock_level THEN 1 ELSE 0 END) as in_stock,
+        SUM(CASE WHEN i.items_on_hand <= i.minimum_stock_level AND i.items_on_hand > 0 THEN 1 ELSE 0 END) as low_stock_count,
+        SUM(CASE WHEN i.items_on_hand <= 0 THEN 1 ELSE 0 END) as out_of_stock
+    FROM categories c
+    LEFT JOIN inventory_items i ON c.id = i.category_id AND i.is_active = 1
+    WHERE c.is_active = 1
+    GROUP BY c.id, c.category_name, c.category_code, c.color
+    ORDER BY total_items DESC
+");
+$chart_data = [];
+while ($row = $category_chart->fetch_assoc()) {
+    $chart_data[] = $row;
+}
+
 require_once 'includes/header.php';
 ?>
 
@@ -118,6 +139,57 @@ require_once 'includes/header.php';
         <div class="stat-info">
             <div class="stat-label">Total Value</div>
             <div class="stat-value">₱<?php echo number_format($stats['total_value'], 2); ?></div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Bar Chart -->
+<div class="card category-chart-card">
+    <div class="category-chart-card-inner">
+        <div class="category-chart-header">
+            <h3>
+                <i class="fas fa-chart-bar"></i> Items by Category
+            </h3>
+            <a href="categories.php" class="btn btn-sm btn-secondary"><i class="fas fa-tags"></i> Manage</a>
+        </div>
+        <div id="categoryChart" class="category-chart-container">
+            <?php if (empty($chart_data)): ?>
+                <div class="category-chart-empty">No categories found</div>
+            <?php else: ?>
+                <?php
+                    $max_items = max(array_column($chart_data, 'total_items'));
+                    if ($max_items == 0) $max_items = 1;
+                    $bar_colors = ['#1a3370','#d4a017','#dc2626','#0d9f6e','#3577f0','#e6930a','#8b5cf6','#06b6d4'];
+                    $max_bar_px = 180; // tallest bar in pixels
+                    $min_bar_px = 28;  // shortest bar minimum
+                ?>
+                <?php foreach ($chart_data as $idx => $cat): ?>
+                    <?php 
+                        $color = $cat['color'] ?: $bar_colors[$idx % count($bar_colors)];
+                        // Pixel height: proportional to max, with a guaranteed minimum
+                        $bar_px = round(($cat['total_items'] / $max_items) * $max_bar_px);
+                        if ($bar_px < $min_bar_px && $cat['total_items'] > 0) $bar_px = $min_bar_px;
+                        if ($cat['total_items'] == 0) $bar_px = 6;
+                    ?>
+                    <div class="category-chart-bar-wrapper">
+                        <div class="category-chart-bar-count">
+                            <?php echo number_format($cat['total_items']); ?>
+                        </div>
+                        <div class="category-chart-bar" style="height: <?php echo $bar_px; ?>px; background: linear-gradient(180deg, <?php echo $color; ?> 0%, <?php echo $color; ?>bb 100%);"
+                        title="<?php echo htmlspecialchars($cat['category_name']); ?>: <?php echo $cat['total_items']; ?> items (<?php echo (int)$cat['in_stock']; ?> in stock, <?php echo (int)$cat['low_stock_count']; ?> low, <?php echo (int)$cat['out_of_stock']; ?> out)"
+                        onclick="window.location.href='inventory.php?category=<?php echo $cat['category_code']; ?>'">
+                        </div>
+                        <div class="category-chart-bar-label">
+                            <div class="category-chart-bar-code">
+                                <?php echo htmlspecialchars($cat['category_code'] ?: $cat['category_name']); ?>
+                            </div>
+                            <div class="category-chart-bar-name">
+                                <?php echo htmlspecialchars($cat['category_name']); ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

@@ -6,9 +6,11 @@ $page_title = 'Inventory Items';
 
 // Check if current user is admin
 $is_admin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
+// Both admin and staff can delete
+$can_delete = isset($_SESSION['user_id']);
 
 // Handle single item delete (soft delete)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $is_admin) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $can_delete) {
 
     if ($_POST['action'] === 'delete' && isset($_POST['item_id'])) {
         $item_id = (int)$_POST['item_id'];
@@ -196,7 +198,7 @@ require_once 'includes/header.php';
     </div>
     
     <div class="flex gap-10 align-center">
-        <?php if ($is_admin): ?>
+        <?php if ($can_delete): ?>
             <button id="bulkDeleteBtn" class="btn btn-danger" style="display: none;" onclick="confirmBulkDelete()">
                 <i class="fas fa-trash-alt"></i> Delete Selected (<span id="selectedCount">0</span>)
             </button>
@@ -208,17 +210,17 @@ require_once 'includes/header.php';
 </div>
 
 <!-- Bulk delete form (hidden, submitted via JS) -->
-<?php if ($is_admin): ?>
+<!-- <?php if ($can_delete): ?> -->
 <form id="bulkDeleteForm" method="POST" action="inventory.php?<?php echo http_build_query(array_intersect_key($_GET, array_flip(['search','category','status','page']))); ?>">
     <input type="hidden" name="action" value="bulk_delete">
     <div id="bulkIdsContainer"></div>
 </form>
-<?php endif; ?>
+<!-- <?php endif; ?> -->
 
 <div class="table-container">
     <div class="table-header">
         <h3 class="table-title">Inventory Items (<?php echo number_format($total); ?> total)</h3>
-        <?php if ($is_admin && $total > 0): ?>
+        <?php if ($can_delete && $total > 0): ?>
             <label class="user-checkbox-label" style="font-size:13px;color:#6b7280;">
                 <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" style="margin-right:6px;">
                 Select All on Page
@@ -229,7 +231,7 @@ require_once 'includes/header.php';
         <table>
             <thead>
                 <tr>
-                    <?php if ($is_admin): ?>
+                    <?php if ($can_delete): ?>
                         <th style="width: 36px;"></th>
                     <?php endif; ?>
                     <th>Item Code</th>
@@ -251,7 +253,7 @@ require_once 'includes/header.php';
                 <?php if ($items->num_rows > 0): ?>
                     <?php while ($row = $items->fetch_assoc()): ?>
                         <tr id="row-<?php echo $row['id']; ?>">
-                            <?php if ($is_admin): ?>
+                            <?php if ($can_delete): ?>
                                 <td>
                                     <input 
                                         type="checkbox" 
@@ -326,20 +328,20 @@ require_once 'includes/header.php';
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     
-                                    <?php if ($is_admin): ?>
+                                   
                                         <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['item_code'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars(substr($row['item_description'], 0, 50), ENT_QUOTES); ?>')" 
                                             class="btn btn-sm btn-danger" title="Delete" 
                                             class="bulk-action-btn">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                    <?php endif; ?>
+                               
                                 </div>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="<?php echo $is_admin ? 11 : 10; ?>" class="text-center">No items found</td>
+                        <td colspan="<?php echo $can_delete ? 11 : 10; ?>" class="text-center">No items found</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -370,7 +372,7 @@ require_once 'includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php if ($is_admin): ?>
+<?php if ($can_delete): ?>
 
 <!-- Single Delete Confirmation Modal -->
 <div id="deleteModal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center;">
@@ -518,7 +520,7 @@ document.addEventListener('keydown', function(e) {
                 curTbody.style.opacity = '0.5';
                 curTbody.innerHTML = newTbody.innerHTML;
                 curTbody.style.opacity = '1';
-                <?php if ($is_admin): ?>
+                <?php if ($can_delete): ?>
                 document.querySelectorAll('.row-checkbox').forEach(cb => {
                     cb.addEventListener('change', updateBulkDeleteBtn);
                 });
@@ -618,7 +620,7 @@ function refreshInventory() {
                     window.scrollTo(0, scrollY);
                     
                     // Reattach event listeners for checkboxes (if admin)
-                    <?php if ($is_admin): ?>
+                    <?php if ($can_delete): ?>
                     document.querySelectorAll('.row-checkbox').forEach(cb => {
                         cb.addEventListener('change', updateBulkDeleteBtn);
                     });

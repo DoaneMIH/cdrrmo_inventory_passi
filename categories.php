@@ -169,13 +169,13 @@ require_once 'includes/header.php';
 
 <div class="dashboard-cards">
     <?php while ($cat = $categories->fetch_assoc()): ?>
-        <div class="card">
+        <div class="card" style="display: flex; flex-direction: column;">
             <div class="category-card-header">
                 <div class="category-card-title-row">
-                    <div style="width: 50px; height: 50px; border-radius: 8px; background: <?php echo htmlspecialchars($cat['color'] ?? '#3b82f6'); ?>20; display: flex; align-items: center; justify-content: center; color: <?php echo htmlspecialchars($cat['color'] ?? '#3b82f6'); ?>; font-size: 24px; font-weight: bold;">
+                    <div style="width: 48px; height: 48px; border-radius: var(--radius); background: <?php echo htmlspecialchars($cat['color'] ?? '#3b82f6'); ?>18; display: flex; align-items: center; justify-content: center; color: <?php echo htmlspecialchars($cat['color'] ?? '#3b82f6'); ?>; font-size: 13px; font-weight: 800; flex-shrink: 0; letter-spacing: -.3px;">
                         <?php echo htmlspecialchars($cat['category_code']); ?>
                     </div>
-                    <div>
+                    <div style="min-width: 0;">
                         <h3 class="category-name"><?php echo htmlspecialchars($cat['category_name']); ?></h3>
                         <p class="category-subtitle">
                             <?php echo htmlspecialchars($cat['description'] ?? 'No description'); ?>
@@ -189,14 +189,16 @@ require_once 'includes/header.php';
                 </div>
             </div>
             
+            <div style="flex: 1;"></div>
+            
             <div class="category-stats-grid">
                 <div>
                     <div class="category-stat-label">Total Items</div>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--gray-800);"><?php echo number_format($cat['item_count']); ?></div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--gray-800);"><?php echo number_format($cat['item_count']); ?></div>
                 </div>
                 <div>
                     <div class="category-stat-label">In Stock</div>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--success);"><?php echo number_format($cat['items_in_stock']); ?></div>
+                    <div style="font-size: 22px; font-weight: 800; color: var(--success);"><?php echo number_format($cat['items_in_stock']); ?></div>
                 </div>
             </div>
             
@@ -209,14 +211,12 @@ require_once 'includes/header.php';
                 </button>
                 
                 <?php if ($is_admin): ?>
-                    <!-- Toggle Active/Inactive -->
                     <button class="btn btn-sm <?php echo $cat['is_active'] ? 'btn-secondary' : 'btn-success'; ?>" 
                             onclick="toggleStatus(<?php echo $cat['id']; ?>, <?php echo $cat['is_active'] ? 0 : 1; ?>)"
                             title="<?php echo $cat['is_active'] ? 'Deactivate' : 'Activate'; ?>">
                         <i class="fas fa-<?php echo $cat['is_active'] ? 'ban' : 'check'; ?>"></i>
                     </button>
                     
-                    <!-- Permanent Delete (only show for inactive items) -->
                     <?php if (!$cat['is_active']): ?>
                         <button class="btn btn-sm btn-danger" 
                                 onclick="confirmPermanentDelete(<?php echo $cat['id']; ?>, '<?php echo htmlspecialchars($cat['category_name'], ENT_QUOTES); ?>', <?php echo $cat['item_count']; ?>)" 

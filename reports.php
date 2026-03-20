@@ -196,7 +196,7 @@ require_once 'includes/header.php';
 </div>
 
 <!-- Quick Statistics -->
-<?php
+<!-- <?php
 // Get quick stats for display
 $stats_query = $conn->query("
     SELECT 
@@ -285,6 +285,6 @@ $trans_data = $trans_stats->fetch_assoc();
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <?php require_once 'includes/footer.php'; ?>

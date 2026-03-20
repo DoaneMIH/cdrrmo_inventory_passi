@@ -69,16 +69,16 @@ if (!isset($_SESSION['user_id'])) {
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>
 
-                <div class="menu-divider">Support</div>
+                <!-- <div class="menu-divider">Support</div> -->
                 <!-- <a href="feedback.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'feedback.php' ? 'active' : ''; ?>">
                     <i class="fas fa-comment-dots"></i> Send Feedback
                 </a>
                  -->
-                <?php if ($_SESSION['user_role'] === 'admin'): ?>
+                <!-- <?php if ($_SESSION['user_role'] === 'admin'): ?>
                     <a href="admin_feedback.php" class="menu-item <?php echo basename($_SERVER['PHP_SELF']) == 'admin_feedback.php' ? 'active' : ''; ?>">
                         <i class="fas fa-inbox"></i> Manage Feedback
                     </a>
-                <?php endif; ?>
+                <?php endif; ?> -->
                 
                 <?php if ($_SESSION['user_role'] === 'admin'): ?>
                 <div class="menu-divider">Administration</div>
