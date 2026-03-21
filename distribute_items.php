@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $unit_cost = $item_data['unit_cost'];
         
-        // Insert transaction (total_cost is auto-generated)
+        // Insert distribution transaction
         $stmt = $conn->prepare("
             INSERT INTO transactions (
                 transaction_code, item_id, transaction_type, quantity, unit_cost,
@@ -68,7 +68,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         
         if ($stmt->execute()) {
-            // Update inventory
+            $transaction_id = $conn->insert_id;
+
+            // ── FIFO BATCH DEDUCTION ──────────────────────────────────────────
+            // Fetch batches for this item ordered by earliest expiration first (FEFO).
+            // Batches without expiration date come last.
+            $batches_result = $conn->prepare("
+                SELECT id, quantity_on_hand
+                FROM item_batches
+                WHERE item_id = ? AND quantity_on_hand > 0
+                ORDER BY
+                    CASE WHEN expiration_date IS NULL THEN 1 ELSE 0 END ASC,
+                    expiration_date ASC,
+                    received_date ASC
+            ");
+            $batches_result->bind_param("i", $item_id);
+            $batches_result->execute();
+            $batches = $batches_result->get_result();
+            $batches_result->close();
+
+            $remaining_to_deduct = $quantity;
+
+            $deduct_batch_stmt = $conn->prepare(
+                "UPDATE item_batches SET quantity_on_hand = quantity_on_hand - ? WHERE id = ?"
+            );
+            $record_dist_stmt = $conn->prepare(
+                "INSERT INTO distribution_batches (transaction_id, batch_id, quantity_taken) VALUES (?, ?, ?)"
+            );
+
+            while ($batch = $batches->fetch_assoc()) {
+                if ($remaining_to_deduct <= 0) break;
+
+                $take = min($remaining_to_deduct, $batch['quantity_on_hand']);
+
+                // Deduct from this batch
+                $deduct_batch_stmt->bind_param("ii", $take, $batch['id']);
+                $deduct_batch_stmt->execute();
+
+                // Record which batch was used
+                $record_dist_stmt->bind_param("iii", $transaction_id, $batch['id'], $take);
+                $record_dist_stmt->execute();
+
+                $remaining_to_deduct -= $take;
+            }
+
+            $deduct_batch_stmt->close();
+            $record_dist_stmt->close();
+            // ── END FIFO BATCH DEDUCTION ──────────────────────────────────────
+
+            // Update inventory totals
             $update_stmt = $conn->prepare("
                 UPDATE inventory_items 
                 SET items_distributed = items_distributed + ?,

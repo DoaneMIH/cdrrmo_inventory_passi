@@ -25,7 +25,7 @@ $selected_item_id = isset($_GET['item_id']) ? (int)$_GET['item_id'] : 0;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $item_id = (int)$_POST['item_id'];
     $quantity = (int)$_POST['quantity'];
-    $unit_cost = (float)$_POST['unit_cost'];
+    $unit_cost = isset($_POST['unit_cost']) ? (float)$_POST['unit_cost'] : 0.00;
     $transaction_date = sanitize_input($_POST['transaction_date']);
     $supplier_id = !empty($_POST['supplier_id']) ? (int)$_POST['supplier_id'] : null;
     $reference_number = sanitize_input($_POST['reference_number']);
@@ -59,7 +59,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         
         if ($stmt->execute()) {
-            // Update inventory
+            $transaction_id = $conn->insert_id;
+
+            // ── BATCH RECORD: Insert a new row into item_batches ──────────────
+            // Each receive creates a SEPARATE batch so expiration dates are preserved.
+            $batch_stmt = $conn->prepare("
+                INSERT INTO item_batches (
+                    item_id, transaction_id, batch_number, ris_no,
+                    quantity_received, quantity_on_hand, unit_cost,
+                    expiration_date, received_date, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+            $batch_stmt->bind_param(
+                "iissiidsss",
+                $item_id, $transaction_id, $batch_number, $reference_number,
+                $quantity, $quantity, $unit_cost,
+                $expiration_date, $transaction_date, $notes
+            );
+            $batch_stmt->execute();
+            $batch_stmt->close();
+            // ── END BATCH RECORD ──────────────────────────────────────────────
+
+            // Update inventory totals (unchanged — items table stays consistent)
             $update_stmt = $conn->prepare("
                 UPDATE inventory_items 
                 SET items_received = items_received + ?,
@@ -196,14 +217,14 @@ require_once 'includes/header.php';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
                 <div class="form-group">
-                    <label class="form-label">RIS No.</label>
-                    <input type="text" name="reference_number" class="form-control" 
+                    <label class="form-label">RIS No. *</label>
+                    <input type="text" name="reference_number" class="form-control" required 
                         placeholder="PO/DR/Invoice number">
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">Batch Number</label>
-                    <input type="text" name="batch_number" class="form-control" 
+                    <label class="form-label">Batch Number *</label>
+                    <input type="text" name="batch_number" class="form-control" required
                         placeholder="Batch/Lot number">
                 </div>
                 

@@ -695,6 +695,50 @@ AND t.is_borrowed = 1;
 -- END OF DATABASE SETUP
 -- ============================================================================
 
+
+-- ============================================================================
+-- MIGRATION: Batch-Based Expiration & Distribution Tracking
+-- ============================================================================
+
+-- 1. item_batches: stores each received batch separately
+CREATE TABLE IF NOT EXISTS item_batches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+    transaction_id INT NULL COMMENT 'Links to the transactions table entry',
+    batch_number VARCHAR(50),
+    ris_no VARCHAR(50) COMMENT 'Reference/RIS number from receive transaction',
+    quantity_received INT NOT NULL DEFAULT 0,
+    quantity_on_hand INT NOT NULL DEFAULT 0 COMMENT 'Remaining after distributions',
+    unit_cost DECIMAL(10,2) DEFAULT 0.00,
+    expiration_date DATE NULL,
+    received_date DATE NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (item_id) REFERENCES inventory_items(id) ON DELETE CASCADE
+) COMMENT 'Stores individual receive batches for FIFO expiration tracking';
+
+-- 2. distribution_batches: tracks which batches were used per distribution
+CREATE TABLE IF NOT EXISTS distribution_batches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL COMMENT 'The distribution transaction',
+    batch_id INT NOT NULL COMMENT 'The item_batch used',
+    quantity_taken INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
+    FOREIGN KEY (batch_id) REFERENCES item_batches(id) ON DELETE CASCADE
+) COMMENT 'Records which batches were consumed in each distribution (FIFO)';
+
+-- Indexes for performance
+ALTER TABLE item_batches
+    ADD INDEX idx_item_batches_item_id (item_id),
+    ADD INDEX idx_item_batches_expiration (expiration_date),
+    ADD INDEX idx_item_batches_qty (quantity_on_hand);
+
+ALTER TABLE distribution_batches
+    ADD INDEX idx_dist_batches_txn (transaction_id),
+    ADD INDEX idx_dist_batches_batch (batch_id);
+
 SELECT 'Database setup completed successfully!' AS Status;
 SELECT COUNT(*) AS total_users FROM users;
 SELECT COUNT(*) AS total_categories FROM categories;

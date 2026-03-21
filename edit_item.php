@@ -98,7 +98,43 @@ require_once 'includes/header.php';
         <div class="form-grid-3">
             <div class="form-group form-grid-col">
                 <label class="form-label">Unit of Measurement *</label>
-                <input type="text" name="unit" class="form-control" required value="<?php echo htmlspecialchars($item['unit'] ?? 'pcs'); ?>">
+                <?php $current_unit = $item['unit'] ?? 'pcs'; ?>
+                <select name="unit" class="form-control" required>
+                    <option value="" disabled>-- Select Unit --</option>
+                    <?php
+                    $unit_options = [
+                        'pcs' => 'pcs (Pieces)',
+                        'boxes' => 'boxes',
+                        'packs' => 'packs',
+                        'bottles' => 'bottles',
+                        'cans' => 'cans',
+                        'rolls' => 'rolls',
+                        'sets' => 'sets',
+                        'pairs' => 'pairs',
+                        'cases' => 'cases',
+                        'bundles' => 'bundles',
+                        'pads' => 'pads',
+                        'sacks' => 'sacks',
+                        'ream' => 'ream',
+                        'dozen' => 'dozen',
+                        'kg' => 'kg (Kilograms)',
+                        'g' => 'g (Grams)',
+                        'liters' => 'liters',
+                        'gallons' => 'gallons',
+                        'meters' => 'meters',
+                        'units' => 'units',
+                    ];
+                    $found = false;
+                    foreach ($unit_options as $val => $label):
+                        $sel = (strtolower(trim($current_unit)) === $val) ? 'selected' : '';
+                        if ($sel) $found = true;
+                    ?>
+                        <option value="<?php echo $val; ?>" <?php echo $sel; ?>><?php echo $label; ?></option>
+                    <?php endforeach; ?>
+                    <?php if (!$found && $current_unit): ?>
+                        <option value="<?php echo htmlspecialchars($current_unit); ?>" selected><?php echo htmlspecialchars($current_unit); ?></option>
+                    <?php endif; ?>
+                </select>
             </div>
             <div class="form-group form-grid-col">
                 <label class="form-label">Unit Cost (₱) *</label>

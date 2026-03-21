@@ -60,21 +60,61 @@ $low_stock_items = $conn->query("
     LIMIT 5
 ");
 
-// Get expiring items
-$expiring_items = $conn->query("
-    SELECT 
-        i.item_code,
-        i.item_description,
-        i.expiration_date,
-        DATEDIFF(i.expiration_date, CURDATE()) as days_until_expiry
-    FROM inventory_items i
-    WHERE i.expiration_date IS NOT NULL
-    AND i.expiration_date >= CURDATE()
-    AND DATEDIFF(i.expiration_date, CURDATE()) <= 30
-    AND i.is_active = 1
-    ORDER BY i.expiration_date ASC
-    LIMIT 5
-");
+// ── Expiring Soon: batch-based + item-level, with filter support ──────────────
+$expiry_filter = isset($_GET['expiry_filter']) ? $_GET['expiry_filter'] : 'all';
+
+$expiring_batches   = [];
+$expiring_items_arr = [];
+
+// Received Items (item_batches): all batches expiring within 30 days with qty > 0
+if ($expiry_filter === 'all' || $expiry_filter === 'received') {
+    $batch_q = $conn->query("
+        SELECT
+            ib.id AS batch_id,
+            ib.batch_number,
+            ib.ris_no,
+            ib.quantity_on_hand,
+            ib.expiration_date,
+            ib.received_date,
+            i.item_code,
+            i.item_description,
+            DATEDIFF(ib.expiration_date, CURDATE()) AS days_until_expiry
+        FROM item_batches ib
+        JOIN inventory_items i ON ib.item_id = i.id
+        WHERE ib.expiration_date IS NOT NULL
+          AND ib.expiration_date >= CURDATE()
+          AND DATEDIFF(ib.expiration_date, CURDATE()) <= 30
+          AND ib.quantity_on_hand > 0
+          AND i.is_active = 1
+        ORDER BY ib.expiration_date ASC
+    ");
+    while ($row = $batch_q->fetch_assoc()) {
+        $expiring_batches[] = $row;
+    }
+}
+
+// Inventory Items (items table expiration_date): legacy/item-level
+if ($expiry_filter === 'all' || $expiry_filter === 'items') {
+    $items_q = $conn->query("
+        SELECT
+            i.item_code,
+            i.item_description,
+            i.expiration_date,
+            i.items_on_hand,
+            DATEDIFF(i.expiration_date, CURDATE()) AS days_until_expiry
+        FROM inventory_items i
+        WHERE i.expiration_date IS NOT NULL
+          AND i.expiration_date >= CURDATE()
+          AND DATEDIFF(i.expiration_date, CURDATE()) <= 30
+          AND i.is_active = 1
+        ORDER BY i.expiration_date ASC
+    ");
+    while ($row = $items_q->fetch_assoc()) {
+        $expiring_items_arr[] = $row;
+    }
+}
+
+$has_expiring = !empty($expiring_batches) || !empty($expiring_items_arr);
 
 // Get category breakdown for bar chart
 $category_chart = $conn->query("
@@ -112,7 +152,7 @@ require_once 'includes/header.php';
         </div>
     </div>
     
-    <div class="card stat-card">
+    <!-- <div class="card stat-card">
         <div class="stat-icon yellow">
             <i class="fas fa-tags"></i>
         </div>
@@ -120,7 +160,7 @@ require_once 'includes/header.php';
             <div class="stat-label">Categories</div>
             <div class="stat-value"><?php echo number_format($stats['total_categories']); ?></div>
         </div>
-    </div>
+    </div> -->
     
     <div class="card stat-card">
         <div class="stat-icon red">
@@ -287,44 +327,115 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<!-- Expiring Items -->
-<?php if ($expiring_items->num_rows > 0): ?>
+<!-- Expiring Soon (Batch-based + Item-level with filter) -->
+<?php if ($has_expiring || true): ?>
 <div class="table-container">
     <div class="table-header">
-        <h3 class="table-title">Expiring Soon (Within 30 Days)</h3>
+        <h3 class="table-title">
+            <i class="fas fa-clock" style="color: var(--warning);"></i>
+            Expiring Soon (Within 30 Days)
+        </h3>
+        <div class="expiry-filter-wrap">
+            <select class="expiry-filter-select" onchange="location.href='dashboard.php?expiry_filter='+this.value+'<?php echo isset($_GET['expiry_filter']) ? '' : ''; ?>'">
+                <option value="all"      <?php echo ($expiry_filter === 'all')      ? 'selected' : ''; ?>>All</option>
+                <option value="received" <?php echo ($expiry_filter === 'received') ? 'selected' : ''; ?>>Received Items (Batch)</option>
+                <option value="items"    <?php echo ($expiry_filter === 'items')    ? 'selected' : ''; ?>>Inventory Items</option>
+            </select>
+        </div>
     </div>
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Item Code</th>
-                    <th>Description</th>
-                    <th>Expiration Date</th>
-                    <th>Days Until Expiry</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = $expiring_items->fetch_assoc()): ?>
+
+    <?php if (!$has_expiring): ?>
+        <div class="table-responsive">
+            <p style="text-align:center; padding:20px; color: var(--text-muted);">No items expiring within 30 days.</p>
+        </div>
+    <?php else: ?>
+
+    <?php if (!empty($expiring_batches)): ?>
+        <p class="expiry-section-label"><i class="fas fa-layer-group"></i> Received Item Batches</p>
+        <div class="table-responsive">
+            <table>
+                <thead>
                     <tr>
-                        <td><strong><?php echo htmlspecialchars($row['item_code']); ?></strong></td>
-                        <td><?php echo htmlspecialchars($row['item_description']); ?></td>
-                        <td><?php echo date('M d, Y', strtotime($row['expiration_date'])); ?></td>
-                        <td><?php echo $row['days_until_expiry']; ?> days</td>
-                        <td>
-                            <?php if ($row['days_until_expiry'] <= 7): ?>
-                                <span class="badge badge-danger">Critical</span>
-                            <?php elseif ($row['days_until_expiry'] <= 14): ?>
-                                <span class="badge badge-warning">Warning</span>
-                            <?php else: ?>
-                                <span class="badge badge-info">Monitor</span>
-                            <?php endif; ?>
-                        </td>
+                        <th>Item Code</th>
+                        <th>Description</th>
+                        <th>Batch / RIS No.</th>
+                        <th>Qty on Hand</th>
+                        <th>Expiration Date</th>
+                        <th>Days Left</th>
+                        <th>Status</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <?php foreach ($expiring_batches as $row): ?>
+                        <tr>
+                            <td><strong><?php echo htmlspecialchars($row['item_code']); ?></strong></td>
+                            <td><?php echo htmlspecialchars(substr($row['item_description'], 0, 45)) . (strlen($row['item_description']) > 45 ? '...' : ''); ?></td>
+                            <td>
+                                <?php if ($row['batch_number']): ?>
+                                    <span class="badge badge-info"><?php echo htmlspecialchars($row['batch_number']); ?></span>
+                                <?php endif; ?>
+                                <?php if ($row['ris_no']): ?>
+                                    <small style="color:var(--text-muted);"><?php echo htmlspecialchars($row['ris_no']); ?></small>
+                                <?php endif; ?>
+                            </td>
+                            <td><strong><?php echo number_format($row['quantity_on_hand']); ?></strong></td>
+                            <td><?php echo date('M d, Y', strtotime($row['expiration_date'])); ?></td>
+                            <td><?php echo $row['days_until_expiry']; ?> days</td>
+                            <td>
+                                <?php if ($row['days_until_expiry'] <= 7): ?>
+                                    <span class="badge badge-danger">Critical</span>
+                                <?php elseif ($row['days_until_expiry'] <= 14): ?>
+                                    <span class="badge badge-warning">Warning</span>
+                                <?php else: ?>
+                                    <span class="badge badge-info">Monitor</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($expiring_items_arr)): ?>
+        <p class="expiry-section-label" style="margin-top:18px;"><i class="fas fa-boxes"></i> Inventory Items</p>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Code</th>
+                        <th>Description</th>
+                        <th>Stock on Hand</th>
+                        <th>Expiration Date</th>
+                        <th>Days Left</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($expiring_items_arr as $row): ?>
+                        <tr>
+                            <td><strong><?php echo htmlspecialchars($row['item_code']); ?></strong></td>
+                            <td><?php echo htmlspecialchars(substr($row['item_description'], 0, 45)) . (strlen($row['item_description']) > 45 ? '...' : ''); ?></td>
+                            <td><?php echo number_format($row['items_on_hand']); ?></td>
+                            <td><?php echo date('M d, Y', strtotime($row['expiration_date'])); ?></td>
+                            <td><?php echo $row['days_until_expiry']; ?> days</td>
+                            <td>
+                                <?php if ($row['days_until_expiry'] <= 7): ?>
+                                    <span class="badge badge-danger">Critical</span>
+                                <?php elseif ($row['days_until_expiry'] <= 14): ?>
+                                    <span class="badge badge-warning">Warning</span>
+                                <?php else: ?>
+                                    <span class="badge badge-info">Monitor</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php endif; ?>
 </div>
 <?php endif; ?>
 

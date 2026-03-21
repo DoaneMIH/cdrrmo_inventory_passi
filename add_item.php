@@ -96,7 +96,29 @@ require_once 'includes/header.php';
         <div class="form-grid-3">
             <div class="form-group form-grid-col">
                 <label class="form-label">Unit of Measurement *</label>
-                <input type="text" name="unit" class="form-control" required placeholder="pcs, boxes, bottles, kg, etc.">
+                <select name="unit" class="form-control" required>
+                    <option value="" disabled selected>-- Select Unit --</option>
+                    <option value="pcs">pcs (Pieces)</option>
+                    <option value="boxes">boxes</option>
+                    <option value="packs">packs</option>
+                    <option value="bottles">bottles</option>
+                    <option value="cans">cans</option>
+                    <option value="rolls">rolls</option>
+                    <option value="sets">sets</option>
+                    <option value="pairs">pairs</option>
+                    <option value="cases">cases</option>
+                    <option value="bundles">bundles</option>
+                    <option value="pads">pads</option>
+                    <option value="sacks">sacks</option>
+                    <option value="ream">ream</option>
+                    <option value="dozen">dozen</option>
+                    <option value="kg">kg (Kilograms)</option>
+                    <option value="g">g (Grams)</option>
+                    <option value="liters">liters</option>
+                    <option value="gallons">gallons</option>
+                    <option value="meters">meters</option>
+                    <option value="units">units</option>
+                </select>
             </div>
             
             <div class="form-group form-grid-col">

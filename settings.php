@@ -412,7 +412,7 @@ require_once 'includes/header.php';
 </div>
 
 <!-- Changelog -->
-<div class="settings-card mt-20">
+<!-- <div class="settings-card mt-20">
     <h3><i class="fas fa-history"></i> Recent Updates (Version 2.0.0)</h3>
     
     <div class="changelog">
@@ -458,10 +458,10 @@ require_once 'includes/header.php';
             <li>Custodian slip generation</li>
         </ul>
     </div>
-</div>
+</div> -->
 
 <!-- Support Information -->
-<div class="settings-card mt-20">
+<!-- <div class="settings-card mt-20">
     <h3><i class="fas fa-question-circle"></i> Support & Documentation</h3>
     <div class="settings-support-box">
         <div class="settings-support-title">
@@ -489,10 +489,10 @@ require_once 'includes/header.php';
         <span class="info-label">System Purpose</span>
         <span class="info-value">Disaster Risk Reduction Management</span>
     </div>
-</div>
+</div> -->
 
 <!-- Developer Info -->
-<div class="settings-card mt-20 bg-gray-50">
+<!-- <div class="settings-card mt-20 bg-gray-50">
     <h3><i class="fas fa-code"></i> Development Information</h3>
     <div class="settings-dev-center">
         <div class="settings-dev-name">
@@ -508,6 +508,6 @@ require_once 'includes/header.php';
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <?php require_once 'includes/footer.php'; ?>

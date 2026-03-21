@@ -184,7 +184,7 @@ require_once 'includes/header.php';
                         <th>Transaction Code</th>
                         <th>Type</th>
                         <th>Quantity</th>
-                        <th>Supplier/Recipient</th>
+                        <!-- <th>Supplier/Recipient</th> -->
                         <th>Processed By</th>
                     </tr>
                 </thead>
@@ -208,13 +208,13 @@ require_once 'includes/header.php';
                                         <?php echo $is_neg ? '-' : '+'; ?><?php echo number_format($trans['quantity']); ?>
                                     </strong>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <?php
                                     if ($trans['supplier_name']) echo '<i class="fas fa-truck"></i> ' . htmlspecialchars($trans['supplier_name']);
                                     elseif ($trans['recipient_name']) echo '<i class="fas fa-user"></i> ' . htmlspecialchars($trans['recipient_name']);
                                     else echo '-';
                                     ?>
-                                </td>
+                                </td> -->
                                 <td><?php echo htmlspecialchars($trans['created_by_name'] ?? 'System'); ?></td>
                             </tr>
                         <?php endwhile; ?>

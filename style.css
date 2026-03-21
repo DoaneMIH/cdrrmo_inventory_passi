@@ -2615,3 +2615,55 @@ input[placeholder="e.g., WH-01, SR-A"] { text-transform: uppercase; }
 @media print {
     .site-footer { display: none !important; }
 }
+
+/* ============================================================
+   BATCH EXPIRATION TRACKING — Dashboard Expiring Soon Section
+   Added for: batch-based expiry tracking & filter dropdown
+   ============================================================ */
+
+/* Filter wrapper in the table-header */
+.expiry-filter-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expiry-filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 6px 32px 6px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color .15s;
+}
+
+.expiry-filter-select:hover,
+.expiry-filter-select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* Section label separating batch rows from item rows */
+.expiry-section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    padding: 8px 16px 4px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.expiry-section-label i {
+    color: var(--primary-light);
+}
