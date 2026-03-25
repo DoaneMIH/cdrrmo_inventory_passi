@@ -58,8 +58,95 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title; ?></title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @page { size: A4 portrait; margin: 0.1in 0.50in; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; font-size: 9pt; line-height: 1.2; color: #000; background: #fff; }
+        .report-container { width: 100%; max-width: 8.5in; margin: 0 auto; padding: 5px 0; }
+        
+        /* Filter Panel */
+        .filter-panel { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+        .filter-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .filter-group { display: flex; flex-direction: column; }
+        .filter-label { font-size: 11px; font-weight: 600; margin-bottom: 5px; color: #333; }
+        .filter-control { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; }
+        .filter-buttons { display: flex; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .btn-primary { background: #1e3a8a; color: white; }
+        .btn-primary:hover { background: #1e40af; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-success { background: #059669; color: white; }
+        
+        /* Logo Header */
+        .logo-header { text-align: center; margin-bottom: 10px; }
+        .header-row { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; gap: 10px; }
+        .logo-left, .logo-right { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: contain;
+        }
+        .header-text { padding: 0 15px; text-align: center; }
+        .header-title { font-size: 11pt; font-weight: bold; margin-bottom: 2px; }
+        .header-subtitle { font-size: 10pt; margin-bottom: 2px; }
+        
+        .report-header { text-align: center; margin-bottom: 15px; }
+        .report-title { font-size: 12pt; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+        .report-period { font-size: 10pt; margin-bottom: 15px; }
+        
+        .report-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 9pt; }
+        .info-left { text-align: left; }
+        .info-right { text-align: right; }
+        .info-label { font-weight: bold; }
+        
+        .report-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .report-table th, .report-table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+        .report-table thead th { background: #f5f5f5; font-weight: bold; text-align: center; font-size: 8pt; text-transform: uppercase; }
+        .report-table tbody td { font-size: 8.5pt; }
+        
+        .col-ris { width: 8%; }
+        .col-center { width: 8%; }
+        .col-stock { width: 8%; }
+        .col-item { width: 28%; }
+        .col-source { width: 10%; }
+        .col-unit { width: 6%; }
+        .col-qty { width: 8%; text-align: center; }
+        .col-cost { width: 12%; text-align: right; }
+        .col-amount { width: 12%; text-align: right; }
+        .section-header { background: #e5e5e5 !important; font-size: 7.5pt; text-align: center !important; padding: 3px 6px !important; font-style: italic; }
+        
+        .recap-section { display: flex; gap: 20px; margin-top: 15px; }
+        .recap-left, .recap-right { flex: 1; }
+        .recap-title { font-weight: bold; text-align: center; margin-bottom: 5px; font-size: 9pt; }
+        .recap-table { width: 100%; border-collapse: collapse; }
+        .recap-table th, .recap-table td { border: 1px solid #000; padding: 4px 6px; font-size: 8.5pt; }
+        .recap-table th { background: #f5f5f5; text-align: center; font-weight: bold; }
+        .recap-table td { text-align: center; }
+        .recap-table td.text-right { text-align: right; }
+        
+        .certification { margin-top: 20px; font-size: 9pt; font-style: italic; }
+        .signature-section { display: flex; justify-content: space-between; margin-top: 30px; }
+        .signature-box { width: 45%; }
+        .signature-name { font-weight: bold; text-align: center; margin-top: 30px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 2px; }
+        .signature-title { text-align: center; font-size: 8.5pt; margin-top: 2px; }
+        .signature-label { font-size: 8pt; margin-bottom: 10px; }
+        .signature-date-box { margin-top: 15px; display: flex; justify-content: flex-end; }
+        .signature-date { border: 1px solid #000; padding: 30px 20px 5px; width: 120px; text-align: center; }
+        .signature-date-label { font-size: 8pt; font-weight: bold; }
+        
+        @media print {
+            body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .report-container { padding: 0; }
+            .filter-panel { display: none; }
+        }
+        
+        .print-controls { position: fixed; top: 5px; right: 10px; z-index: 1000; display: flex; gap: 10px; }
+        .btn-print { background: #1e3a8a; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .btn-print:hover { background: #1e40af; }
+        .btn-print.btn-secondary { background: #6b7280; }
+        .btn-print.btn-secondary:hover { background: #4b5563; }
+    </style>
 </head>
 <body>
     <div class="print-controls no-print">
@@ -70,7 +157,7 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
     <div class="report-container">
         <!-- Filter Panel -->
         <div class="filter-panel no-print">
-            <h3 class="txn-card-title">
+            <h3 style="margin-bottom: 15px; color: #1e3a8a; font-size: 14px;">
                 <i class="fas fa-filter"></i> Report Filters
             </h3>
             <form method="GET" action="">
@@ -121,7 +208,7 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-sync"></i> Generate Report
                     </button>
-                    <a href="report_supplies_materials.php" class="btn btn-secondary">
+                    <a href="report_supplies_materials.php" class="btn btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center;">
                         <i class="fas fa-redo"></i>&nbsp; Reset
                     </a>
                 </div>
@@ -183,7 +270,7 @@ $report_type_title = $transaction_filter === 'received' ? 'RECEIVED' : 'ISSUED';
                             <td class="col-center"><?php echo htmlspecialchars($fund_code); ?></td>
                             <td class="col-stock"></td>
                             <td class="col-item"><?php echo htmlspecialchars($item['item_description']); ?></td>
-                            <td class="col-source">
+                            <td class="col-source" style="font-size: 7.5pt;">
                                 <?php 
                                 if ($transaction_filter === 'received') {
                                     echo htmlspecialchars($item['supplier_name'] ?? '-');

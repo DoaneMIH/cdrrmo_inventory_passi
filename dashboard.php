@@ -121,6 +121,7 @@ $category_chart = $conn->query("
     SELECT 
         c.category_name,
         c.category_code,
+        c.description,
         c.color,
         COUNT(i.id) as total_items,
         SUM(CASE WHEN i.items_on_hand > i.minimum_stock_level THEN 1 ELSE 0 END) as in_stock,
@@ -129,7 +130,7 @@ $category_chart = $conn->query("
     FROM categories c
     LEFT JOIN inventory_items i ON c.id = i.category_id AND i.is_active = 1
     WHERE c.is_active = 1
-    GROUP BY c.id, c.category_name, c.category_code, c.color
+    GROUP BY c.id, c.category_name, c.category_code, c.color, c.description
     ORDER BY total_items DESC
 ");
 $chart_data = [];
@@ -224,7 +225,7 @@ require_once 'includes/header.php';
                                 <?php echo htmlspecialchars($cat['category_code'] ?: $cat['category_name']); ?>
                             </div>
                             <div class="category-chart-bar-name">
-                                <?php echo htmlspecialchars($cat['category_name']); ?>
+                                <?php echo htmlspecialchars($cat['description']); ?>
                             </div>
                         </div>
                     </div>
