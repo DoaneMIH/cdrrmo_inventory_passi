@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS categories;
 CREATE TABLE categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_name VARCHAR(50) NOT NULL UNIQUE,
-    category_code VARCHAR(10) UNIQUE COMMENT 'Short code for category (e.g., OFF, MED, SRR, FOOD)',
+    category_code VARCHAR(10) UNIQUE COMMENT 'Short code for category (e.g., OFC, MED, SRR, FOOD)',
     description TEXT,
     icon VARCHAR(50) COMMENT 'Icon identifier for UI',
     color VARCHAR(7) COMMENT 'Hex color code for category badge',
@@ -311,7 +311,7 @@ CREATE TABLE user_feedback (
 
 -- Insert default categories
 INSERT INTO categories (category_name, category_code, description, icon, color, display_order) VALUES
-('OFFICE', 'OFF', 'Office Supplies and Equipment', '📄', '#3498db', 1),
+('OFFICE', 'OFC', 'Office Supplies and Equipment', '📄', '#3498db', 1),
 ('MEDICAL', 'MED', 'Medical Supplies and Equipment', '🏥', '#e74c3c', 2),
 ('SRR', 'SRR', 'Search, Rescue and Relief Equipment', '🚨', '#f39c12', 3),
 ('FOOD', 'FOOD', 'Food and Beverage Supplies', '🍱', '#2ecc71', 4);
@@ -350,15 +350,15 @@ INSERT INTO system_settings (setting_key, setting_value, setting_type, descripti
 
 -- OFFICE SUPPLIES
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, storage_location_id, created_by) VALUES
-('OFF-001', 1, 'Book paper 70 GSM 8.5 inch x 13 inch, sub', 'reams', 50, 30, 20, 10, 1, 1),
-('OFF-002', 1, 'Book paper 70 GSM A4 8.3 inches x 11.7 inch sub 20', 'reams', 50, 30, 20, 10, 1, 1),
-('OFF-003', 1, 'Book paper 70 GSM A4 8.5 inches x 11 inch sub 20', 'reams', 45, 30, 15, 10, 1, 1),
-('OFF-004', 1, 'Printer Ink Bottle Refill 003 "Black" 65ml', 'bottles', 15, 15, 0, 5, 1, 1),
-('OFF-005', 1, 'Printer Ink Bottle Refill 003 "Cyan" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
-('OFF-006', 1, 'Printer Ink Bottle Refill 003 "Yellow" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
-('OFF-007', 1, 'Printer Ink Bottle Refill T664 "Black" 70ml', 'bottles', 5, 5, 0, 5, 1, 1),
-('OFF-008', 1, 'Printer Ink Bottle Refill T664 "Cyan" 70ml', 'bottles', 3, 3, 0, 5, 1, 1),
-('OFF-009', 1, 'Printer Ink Bottle Refill T664 "Yellow" 70ml', 'bottles', 3, 3, 0, 5, 1, 1);
+('OFC-001', 1, 'Book paper 70 GSM 8.5 inch x 13 inch, sub', 'reams', 50, 30, 20, 10, 1, 1),
+('OFC-002', 1, 'Book paper 70 GSM A4 8.3 inches x 11.7 inch sub 20', 'reams', 50, 30, 20, 10, 1, 1),
+('OFC-003', 1, 'Book paper 70 GSM A4 8.5 inches x 11 inch sub 20', 'reams', 45, 30, 15, 10, 1, 1),
+('OFC-004', 1, 'Printer Ink Bottle Refill 003 "Black" 65ml', 'bottles', 15, 15, 0, 5, 1, 1),
+('OFC-005', 1, 'Printer Ink Bottle Refill 003 "Cyan" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
+('OFC-006', 1, 'Printer Ink Bottle Refill 003 "Yellow" 65ml', 'bottles', 6, 6, 0, 5, 1, 1),
+('OFC-007', 1, 'Printer Ink Bottle Refill T664 "Black" 70ml', 'bottles', 5, 5, 0, 5, 1, 1),
+('OFC-008', 1, 'Printer Ink Bottle Refill T664 "Cyan" 70ml', 'bottles', 3, 3, 0, 5, 1, 1),
+('OFC-009', 1, 'Printer Ink Bottle Refill T664 "Yellow" 70ml', 'bottles', 3, 3, 0, 5, 1, 1);
 
 -- MEDICAL SUPPLIES
 INSERT INTO inventory_items (item_code, category_id, item_description, unit, items_received, items_distributed, items_on_hand, minimum_stock_level, storage_location_id, created_by) VALUES
