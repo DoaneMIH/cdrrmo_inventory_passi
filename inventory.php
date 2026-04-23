@@ -329,9 +329,7 @@ require_once 'includes/header.php';
                                     </a>
                                     
                                    
-                                        <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['item_code'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars(substr($row['item_description'], 0, 50), ENT_QUOTES); ?>')" 
-                                            class="btn btn-sm btn-danger" title="Delete" 
-                                            class="bulk-action-btn">
+                                        <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo htmlspecialchars($row['item_code'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars(substr($row['item_description'], 0, 50), ENT_QUOTES); ?>')" class="btn btn-sm btn-danger" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                
@@ -440,7 +438,12 @@ function confirmDelete(id, code, description) {
     
     // Add loading indicator on click
     deleteBtn.onclick = function(e) {
+        e.preventDefault();
         showFormLoading('Deleting item...');
+        // Navigate after short delay to show loading
+        setTimeout(() => {
+            window.location.href = deleteUrl;
+        }, 100);
     };
     
     document.getElementById('deleteModal').style.display = 'flex';
@@ -636,6 +639,10 @@ function refreshInventory() {
                         cb.addEventListener('change', updateBulkDeleteBtn);
                     });
                     updateBulkDeleteBtn();
+                    
+                    // Reset modal state
+                    closeDeleteModal();
+                    closeBulkDeleteModal();
                     <?php endif; ?>
                 }, 150);
             }
