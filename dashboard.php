@@ -152,16 +152,7 @@ require_once 'includes/header.php';
             <div class="stat-value"><?php echo number_format($stats['total_items']); ?></div>
         </div>
     </div>
-    
-    <!-- <div class="card stat-card">
-        <div class="stat-icon yellow">
-            <i class="fas fa-tags"></i>
-        </div>
-        <div class="stat-info">
-            <div class="stat-label">Categories</div>
-            <div class="stat-value"><?php echo number_format($stats['total_categories']); ?></div>
-        </div>
-    </div> -->
+
     
     <div class="card stat-card">
         <div class="stat-icon red">

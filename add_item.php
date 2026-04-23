@@ -204,6 +204,19 @@ function calculateOnHand() {
     const onHand = received - distributed;
     document.getElementById('items_on_hand').textContent = onHand;
 }
+
+// Add loading indicator to form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                showFormLoading('Adding item to inventory...');
+            }
+        });
+    }
+});
 </script>
 
 <?php require_once 'includes/footer.php'; ?>

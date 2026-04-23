@@ -383,6 +383,19 @@ function resetForm() {
     document.getElementById('totalCost').textContent = '0.00';
     document.getElementById('itemClearBtn').style.display = 'none';
 }
+
+// Add loading indicator to form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('receiveForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                showFormLoading('Processing item receipt...');
+            }
+        });
+    }
+});
 </script>
 
 <?php require_once 'includes/footer.php'; ?>

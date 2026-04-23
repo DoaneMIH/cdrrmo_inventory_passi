@@ -127,6 +127,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->bind_param("iiii", $quantity, $quantity, $_SESSION['user_id'], $item_id);
             $update_stmt->execute();
             $update_stmt->close();
+
+            // ── BORROWED ITEM STATUS TRACKING ────────────────────────────────
+            if ($is_borrowed) {
+                // Mark item as "In-Use" if borrowed
+                $current_status_result = $conn->query("SELECT item_status FROM inventory_items WHERE id = $item_id");
+                $current_status_row = $current_status_result->fetch_assoc();
+                $previous_status = $current_status_row['item_status'];
+
+                $status_reason = "Item borrowed and in use";
+                $status_notes = "Borrowed by: $recipient_name" . ($recipient_organization ? " ($recipient_organization)" : "");
+
+                $conn->query("CALL log_item_status_change(
+                    $item_id,
+                    $transaction_id,
+                    '$previous_status',
+                    'In-Use',
+                    '$status_reason',
+                    '$status_notes',
+                    NULL,
+                    NULL,
+                    {$_SESSION['user_id']}
+                )");
+            }
+            // ── END BORROWED ITEM STATUS TRACKING ────────────────────────────
             
             log_activity($_SESSION['user_id'], 'distribute_items', "Distributed $quantity items - Transaction: $transaction_code");
             

@@ -194,4 +194,16 @@ require_once 'includes/header.php';
     </form>
 </div>
 
+<script>
+// Add loading indicator to form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            showFormLoading('Updating item...');
+        });
+    }
+});
+</script>
+
 <?php require_once 'includes/footer.php'; ?>

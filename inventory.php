@@ -435,7 +435,14 @@ function confirmDelete(id, code, description) {
     if (params.has('category')) deleteUrl += '&category=' + encodeURIComponent(params.get('category'));
     if (params.has('status')) deleteUrl += '&status=' + encodeURIComponent(params.get('status'));
     
-    document.getElementById('deleteConfirmBtn').href = deleteUrl;
+    const deleteBtn = document.getElementById('deleteConfirmBtn');
+    deleteBtn.href = deleteUrl;
+    
+    // Add loading indicator on click
+    deleteBtn.onclick = function(e) {
+        showFormLoading('Deleting item...');
+    };
+    
     document.getElementById('deleteModal').style.display = 'flex';
 }
 function closeDeleteModal() {
@@ -483,6 +490,10 @@ function submitBulkDelete() {
         input.value = cb.value;
         container.appendChild(input);
     });
+    
+    // Show loading indicator before submitting bulk delete form
+    showFormLoading('Deleting items...');
+    
     document.getElementById('bulkDeleteForm').submit();
 }
 

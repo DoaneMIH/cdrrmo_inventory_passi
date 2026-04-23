@@ -42,10 +42,10 @@ $inventory_value = $conn->query("
 require_once 'includes/header.php';
 ?>
 
-<div class="alert-info">
+<!-- <div class="alert-info">
     <i class="fas fa-info-circle"></i>
     <strong>System Settings & Information</strong> - View system version, features, statistics, and technical details about the CDRRMO Inventory Management System.
-</div>
+</div> -->
 
 <!-- Version & Release Info -->
 <div class="settings-card mb-30">

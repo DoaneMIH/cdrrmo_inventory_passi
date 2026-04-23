@@ -56,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $return_date = sanitize_input($_POST['return_date']);
     $return_condition = sanitize_input($_POST['return_condition']);
     $return_notes = sanitize_input($_POST['return_notes']);
+    $assessment_status = isset($_POST['assessment_status']) ? sanitize_input($_POST['assessment_status']) : null;
+    $assessment_notes = isset($_POST['assessment_notes']) ? sanitize_input($_POST['assessment_notes']) : '';
 
     $check_stmt = $conn->prepare("
         SELECT t.*, i.unit_cost, i.id as item_id,
@@ -81,21 +83,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($return_quantity > $remaining) {
             $error = "Cannot return more than borrowed. Remaining: $remaining";
         } else {
-            $year = date('Y', strtotime($return_date));
-            $count_result = $conn->query("SELECT COUNT(*) as count FROM transactions WHERE YEAR(transaction_date) = $year");
-            $count = $count_result->fetch_assoc()['count'] + 1;
-            $return_code = "RET-$year-" . str_pad($count, 4, '0', STR_PAD_LEFT);
+            // VALIDATION: Assessment is MANDATORY for Damaged/Fair items
+            if (($return_condition === 'Damaged' || $return_condition === 'Fair') && !$assessment_status) {
+                $error = "Assessment Status is required for items returned in Damaged or Fair condition";
+            } elseif (!$assessment_status && $return_condition !== 'Good') {
+                $error = "Assessment Status is required for items not in Good condition";
+            } else {
+                $year = date('Y', strtotime($return_date));
+                $count_result = $conn->query("SELECT COUNT(*) as count FROM transactions WHERE YEAR(transaction_date) = $year");
+                $count = $count_result->fetch_assoc()['count'] + 1;
+                $return_code = "RET-$year-" . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-            $stmt = $conn->prepare("
-                INSERT INTO transactions (
-                    transaction_code, item_id, transaction_type, quantity, unit_cost,
-                    transaction_date, parent_transaction_id, return_condition, notes, created_by
-                ) VALUES (?, ?, 'returned', ?, ?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->bind_param("siidsissi",
-                $return_code, $original['item_id'], $return_quantity, $original['unit_cost'],
-                $return_date, $transaction_id, $return_condition, $return_notes, $_SESSION['user_id']
-            );
+                $stmt = $conn->prepare("
+                    INSERT INTO transactions (
+                        transaction_code, item_id, transaction_type, quantity, unit_cost,
+                        transaction_date, parent_transaction_id, return_condition, notes, created_by
+                    ) VALUES (?, ?, 'returned', ?, ?, ?, ?, ?, ?, ?)
+                ");
+                $stmt->bind_param("siidsissi",
+                    $return_code, $original['item_id'], $return_quantity, $original['unit_cost'],
+                    $return_date, $transaction_id, $return_condition, $return_notes, $_SESSION['user_id']
+                );
 
             if ($stmt->execute()) {
                 $update_stmt = $conn->prepare("
@@ -107,6 +115,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->execute();
                 $update_stmt->close();
 
+                // ── RETURNED ITEM STATUS TRACKING ───────────────────────────────
+                // Simplified workflow: Available (Good) → Serviceable/Unserviceable (Damaged/Fair with assessment)
+                $new_status = 'Available'; // Default if condition is Good
+                $status_reason = '';
+                
+                if ($return_condition === 'Good') {
+                    $new_status = 'Available';
+                    $status_reason = "Item returned in good condition - available for reuse";
+                } else {
+                    // Fair or Damaged - assessment is mandatory (validated above)
+                    if ($assessment_status === 'Serviceable') {
+                        $new_status = 'Serviceable';
+                        $status_reason = "Item returned in $return_condition condition, assessed as serviceable - repaired and ready for reuse";
+                    } elseif ($assessment_status === 'Unserviceable') {
+                        $new_status = 'Unserviceable';
+                        $status_reason = "Item returned in $return_condition condition, assessed as unserviceable - beyond repair and flagged for disposal";
+                        
+                        // Decrease inventory for unserviceable items
+                        $decrease_stmt = $conn->prepare("
+                            UPDATE inventory_items 
+                            SET items_on_hand = items_on_hand - ?, updated_by = ?
+                            WHERE id = ?
+                        ");
+                        $decrease_stmt->bind_param("iii", $return_quantity, $_SESSION['user_id'], $original['item_id']);
+                        $decrease_stmt->execute();
+                        $decrease_stmt->close();
+                    }
+                }
+
+                // Get current status before update
+                $current_status_result = $conn->query("SELECT item_status FROM inventory_items WHERE id = {$original['item_id']}");
+                $current_status_row = $current_status_result->fetch_assoc();
+                $previous_status = $current_status_row['item_status'] ?? 'In-Use';
+
+                $status_notes = "Returned by: {$original['recipient_name']}" . 
+                                ($original['recipient_organization'] ? " ({$original['recipient_organization']})" : "");
+                
+                if ($assessment_notes) {
+                    $status_notes .= "\n[Assessment Notes]: $assessment_notes";
+                }
+
+                $transaction_id = $stmt->insert_id;
+                $conn->query("CALL log_item_status_change(
+                    {$original['item_id']},
+                    $transaction_id,
+                    '$previous_status',
+                    '$new_status',
+                    '$status_reason',
+                    '$status_notes',
+                    '$return_condition',
+                    '" . addslashes($assessment_notes) . "',
+                    {$_SESSION['user_id']}
+                )");
+                // ── END RETURNED ITEM STATUS TRACKING ───────────────────────────
+
                 log_activity($_SESSION['user_id'], 'return_items', "Returned $return_quantity items - Transaction: $return_code");
                 $_SESSION['success'] = "Items returned successfully! Transaction Code: $return_code";
                 header('Location: return_items.php');
@@ -117,6 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->close();
         }
     }
+}
 }
 
 require_once 'includes/header.php';
@@ -255,12 +319,27 @@ require_once 'includes/header.php';
                 </div>
                 <div class="form-group">
                     <label class="form-label">Condition *</label>
-                    <select name="return_condition" class="form-control" required>
+                    <select name="return_condition" class="form-control" onchange="updateAssessmentRequirement()" required>
                         <option value="">-- Select condition --</option>
                         <option value="Good">Good - No damage</option>
                         <option value="Fair">Fair - Minor wear and tear</option>
                         <option value="Damaged">Damaged - Needs repair/replacement</option>
                     </select>
+                </div>
+                <div class="form-group" id="assessmentGroup" style="display: none;">
+                    <label class="form-label">Assessment Status <span id="assessmentRequired" style="color: #ef4444;">*</span></label>
+                    <select name="assessment_status" id="assessment_status" class="form-control" onchange="toggleAssessmentNotes()">
+                        <option value="">-- Select assessment --</option>
+                        <option value="Serviceable">✓ Serviceable - Repaired/good condition, ready for reuse</option>
+                        <option value="Unserviceable">✗ Unserviceable - Beyond repair, unsafe, or obsolete</option>
+                    </select>
+                    <small class="password-hint" style="color: #ef4444;">
+                        Note: Unserviceable items will be removed from inventory
+                    </small>
+                </div>
+                <div class="form-group" id="assessmentNotesGroup" style="display: none;">
+                    <label class="form-label">Assessment Notes</label>
+                    <textarea name="assessment_notes" class="form-control" rows="2" placeholder="Document findings from your assessment..."></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Return Notes</label>
@@ -288,7 +367,40 @@ function openReturnModal(transactionId, itemName, maxQuantity, unit) {
 function closeReturnModal() {
     const modal = document.getElementById('returnModal');
     modal.classList.remove('show');
-    setTimeout(() => { modal.style.display = 'none'; document.getElementById('returnForm').reset(); }, 200);
+    setTimeout(() => { 
+        modal.style.display = 'none'; 
+        document.getElementById('returnForm').reset(); 
+        document.getElementById('assessmentGroup').style.display = 'none';
+        document.getElementById('assessmentNotesGroup').style.display = 'none';
+    }, 200);
+}
+
+function updateAssessmentRequirement() {
+    const condition = document.querySelector('select[name="return_condition"]').value;
+    const assessmentGroup = document.getElementById('assessmentGroup');
+    const assessmentField = document.getElementById('assessment_status');
+    
+    if (condition === 'Good') {
+        // Good condition - assessment not required
+        assessmentGroup.style.display = 'none';
+        assessmentField.removeAttribute('required');
+        assessmentField.value = '';
+        document.getElementById('assessmentNotesGroup').style.display = 'none';
+    } else if (condition === 'Fair' || condition === 'Damaged') {
+        // Fair or Damaged - assessment IS required
+        assessmentGroup.style.display = 'block';
+        assessmentField.setAttribute('required', 'required');
+    }
+}
+
+function toggleAssessmentNotes() {
+    const assessmentStatus = document.querySelector('select[name="assessment_status"]').value;
+    const notesGroup = document.getElementById('assessmentNotesGroup');
+    if (assessmentStatus) {
+        notesGroup.style.display = 'block';
+    } else {
+        notesGroup.style.display = 'none';
+    }
 }
 </script>
 
